@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playwrite_IT_Moderna, Itim, Poppins } from "next/font/google";
 import "./globals.css";
 
 // Import layout components
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const playwriteITModerna = Playwrite_IT_Moderna({
+  variable: "--font-playwrite-it-moderna",
+  weight: ["400"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const itim = Itim({
+  variable: "--font-itim",
   subsets: ["latin"],
+  weight: ["400"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -29,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white flex flex-col min-h-screen`}
+        className={`${playwriteITModerna.variable} ${itim.variable} ${poppins.variable} antialiased bg-white flex flex-col min-h-screen`}
       >
         <Header />
         <div className="flex-grow">

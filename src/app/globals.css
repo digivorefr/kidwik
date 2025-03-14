@@ -4,24 +4,15 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
-  
+
   /* Theme colors */
   --kiwi-light: #c7e9b0;
   --kiwi-medium: #a3c4a7;
   --kiwi-dark: #70a37f;
   --kiwi-darker: #1F4D36;
 
-}
-
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  --font-base: var(--font-itim);
+  --font-display: var(--font-playwrite-it-moderna);
 }
 
 /* Custom components classes */
@@ -31,10 +22,26 @@ body {
   }
 }
 
+body {
+  color: rgb(var(--foreground-rgb));
+  font-family: var(--font-poppins);
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-itim);
+}
+
+
 /* PDF specific styles */
 .pdf-page {
-  width: 210mm;
-  height: 297mm;
+  width: 297mm;
+  height: 210mm;
   padding: 10mm;
   margin: 0 auto;
   background: white;
@@ -47,12 +54,12 @@ body {
   .print\:hidden {
     display: none !important;
   }
-  
+
   body * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
+
   .pdf-page {
     page-break-after: always;
     box-shadow: none !important;
