@@ -1,118 +1,108 @@
+'use client'
 import { useState } from 'react'
 import { FadeIn } from '@/components/ui/motion'
 import { Step3Props } from './types'
-import html2pdf from 'html2pdf.js'
+import html2pdf from '@digivorefr/html2pdf.js'
 
 function Step3({ handleSave, onPrevStep }: Step3Props) {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>('')
 
   const generatePDF = async () => {
     setIsGeneratingPDF(true)
-    
+    setErrorMessage('')
+
     try {
-      // Force both previews to be visible for the PDF
-      
-      // First, find both preview containers
-      let calendarContainer = document.querySelector('.calendar-preview-container') as HTMLElement;
-      let stickersContainer = document.querySelector('.stickers-preview-container') as HTMLElement;
-      
-      // If either container is missing, we need to find the parent and force toggle the view
-      if (!calendarContainer || !stickersContainer) {
-        // Save current preview mode from data attributes
-        const currentActiveButton = document.querySelector('[data-preview-mode-toggle].bg-gray-800') as HTMLElement;
-        const currentMode = currentActiveButton?.getAttribute('data-preview-mode-toggle') || 'calendar';
-        
-        // Temporarily click the other button to render the missing container
-        if (!calendarContainer && currentMode === 'stickers') {
-          const calendarButton = document.querySelector('[data-preview-mode-toggle="calendar"]') as HTMLElement;
-          calendarButton?.click();
-          // Now try to get the container again
-          calendarContainer = document.querySelector('.calendar-preview-container') as HTMLElement;
-        }
-        
-        if (!stickersContainer && currentMode === 'calendar') {
-          const stickersButton = document.querySelector('[data-preview-mode-toggle="stickers"]') as HTMLElement;
-          stickersButton?.click();
-          // Now try to get the container again
-          stickersContainer = document.querySelector('.stickers-preview-container') as HTMLElement;
-        }
-        
-        // Restore original view
-        const originalButton = document.querySelector(`[data-preview-mode-toggle="${currentMode}"]`) as HTMLElement;
-        originalButton?.click();
+      // Récupérer les éléments uniquement par ID
+      const calendarPreview = document.getElementById('calendar-preview');
+      const stickersPreview = document.getElementById('stickers-preview');
+
+      if (!calendarPreview) {
+        throw new Error('Élément de prévisualisation du calendrier non trouvé. Assurez-vous que l\'élément avec l\'ID "calendar-preview" existe dans le DOM.');
       }
-      
-      // If we still don't have both containers, use the print-only sections as fallback
-      if (!calendarContainer) {
-        calendarContainer = document.querySelector('.hidden.print\\:block:nth-child(1)') as HTMLElement;
+
+      if (!stickersPreview) {
+        throw new Error('Élément de prévisualisation des stickers non trouvé. Assurez-vous que l\'élément avec l\'ID "stickers-preview" existe dans le DOM.');
       }
-      
-      if (!stickersContainer) {
-        stickersContainer = document.querySelector('.hidden.print\\:block:nth-child(2)') as HTMLElement;
-      }
-      
-      if (!calendarContainer || !stickersContainer) {
-        throw new Error('Cannot find calendar or stickers elements for PDF generation');
-      }
-      
-      // Create a temporary container for the PDF content
-      const pdfContainer = document.createElement('div');
-      pdfContainer.style.position = 'absolute';
-      pdfContainer.style.left = '-9999px';
-      pdfContainer.style.top = '-9999px';
-      document.body.appendChild(pdfContainer);
-      
-      // Clone the elements to the PDF container
-      const calendarClone = calendarContainer.cloneNode(true) as HTMLElement;
-      const stickersClone = stickersContainer.cloneNode(true) as HTMLElement;
-      
-      // Create the PDF pages
-      const calendarPage = document.createElement('div');
-      calendarPage.className = 'pdf-page';
-      calendarPage.style.pageBreakAfter = 'always';
-      calendarPage.appendChild(calendarClone);
-      
-      const stickersPage = document.createElement('div');
-      stickersPage.className = 'pdf-page';
-      stickersPage.appendChild(stickersClone);
-      
-      // Add pages to the container
-      pdfContainer.appendChild(calendarPage);
-      pdfContainer.appendChild(stickersPage);
-      
-      // Configure html2pdf
+
+      // Cloner les éléments pour ne pas modifier les originaux
+      const calendarClone = calendarPreview.cloneNode(true) as HTMLElement;
+      const stickersClone = stickersPreview.cloneNode(true) as HTMLElement;
+
+      // Obtenir le HTML et le nettoyer directement
+      const calendarHtml = calendarClone.outerHTML;
+      const stickersHtml = stickersClone.outerHTML;
+
+      // Créer un conteneur pour le PDF avec le HTML nettoyé
+      const pdfContent = document.createElement('div');
+      pdfContent.innerHTML = `
+        <div class="pdf-container" style="background-color: white;">
+          <!-- Première page : Calendrier -->
+          <div class="pdf-page" style="page-break-after: always;">
+            ${calendarHtml}
+          </div>
+
+          <!-- Deuxième page : Gommettes -->
+          <div class="pdf-page">
+            ${stickersHtml}
+          </div>
+        </div>
+      `;
+
+      // Ajouter temporairement à la page
+      document.body.appendChild(pdfContent);
+
+      // Configure html2pdf avec des options plus robustes
       const opt = {
-        margin: 10,
+        margin: 0,
         filename: 'calendrier-et-gommettes.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: 'mm' as const, format: 'a4', orientation: 'portrait' as const }
+        image: { type: 'jpeg', quality: 0.85 },
+        html2canvas: {
+          scale: 4.16666667,
+          useCORS: true,
+          logging: true,
+          backgroundColor: '#ffffff',
+        },
+        jsPDF: {
+          unit: 'mm' as const,
+          format: 'a4',
+          orientation: 'landscape' as const,
+        }
       };
-      
-      // Generate and download the PDF
-      await html2pdf().from(pdfContainer).set(opt).save();
-      
-      // Clean up
-      document.body.removeChild(pdfContainer);
-      
+
+      // Générer le PDF
+      await html2pdf()
+        .from(pdfContent)
+        .set(opt)
+        .save();
+
+      // Nettoyer
+      document.body.removeChild(pdfContent);
     } catch (error) {
       console.error('Error generating PDF:', error);
+      setErrorMessage(error instanceof Error ? error.message : String(error));
       alert('Une erreur est survenue lors de la génération du PDF. Veuillez réessayer.');
     } finally {
       setIsGeneratingPDF(false);
     }
   }
-  
+
   return (
     <FadeIn>
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Votre calendrier est prêt à télécharger !</h2>
-        
+
         <p className="mb-6">
           Vous allez pouvoir télécharger votre calendrier personnalisé ainsi que la planche de gommettes en format PDF.
           Après impression, découpez les gommettes en suivant les bordures et placez-les sur le calendrier selon vos besoins.
         </p>
-        
+
+        {errorMessage && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800">
+            <p><strong>Erreur:</strong> {errorMessage}</p>
+          </div>
+        )}
+
         <div className="flex flex-col space-y-4">
           <button
             onClick={generatePDF}
@@ -134,7 +124,7 @@ function Step3({ handleSave, onPrevStep }: Step3Props) {
               </>
             )}
           </button>
-          
+
           <button
             onClick={handleSave}
             disabled={isGeneratingPDF}
@@ -144,7 +134,7 @@ function Step3({ handleSave, onPrevStep }: Step3Props) {
             Sauvegarder mon calendrier
           </button>
         </div>
-        
+
         <div className="mt-8 flex justify-start">
           <button
             onClick={onPrevStep}

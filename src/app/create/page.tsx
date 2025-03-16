@@ -2,8 +2,8 @@
 
 import { useState, ChangeEvent, useCallback } from 'react'
 import { FadeIn } from '@/components/ui/motion'
-import { 
-  CalendarFormData, 
+import {
+  CalendarFormData,
   DEFAULT_FORM_DATA,
   Activity
 } from './types'
@@ -16,40 +16,40 @@ export default function CreateCalendarPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<CalendarFormData>(DEFAULT_FORM_DATA)
   const [childPhoto, setChildPhoto] = useState<string | null>(null)
-  
+
   const totalSteps = 3
-  
+
   // Available icons for custom activities
   const availableIcons = [
-    '📌', '⭐', '🌟', '🎯', '🎨', '🎭', '🎬', '🎮', '🎷', '🎸', '🎹', '🎺', 
+    '📌', '⭐', '🌟', '🎯', '🎨', '🎭', '🎬', '🎮', '🎷', '🎸', '🎹', '🎺',
     '🎻', '🏀', '⚽', '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '⛳', '🏓', '🏸',
     '🚲', '🛹', '🛼', '⛸️', '🥏', '🎣', '🎲', '🧩', '🧸', '🪁', '🎈', '🎁'
   ]
-  
+
   // Helper functions for form updates
   const updateFormField = useCallback((field: keyof CalendarFormData, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }, [])
-  
+
   const handleActivityToggle = (activity: Activity) => {
     const isSelected = formData.selectedActivities.some(a => a.id === activity.id)
-    
+
     if (isSelected) {
       // Remove the activity from selected activities
-      updateFormField('selectedActivities', 
+      updateFormField('selectedActivities',
         formData.selectedActivities.filter(a => a.id !== activity.id)
       )
-      
+
       // Remove the activity from quantities
       const updatedQuantities = { ...formData.stickerQuantities }
       delete updatedQuantities[activity.id]
       updateFormField('stickerQuantities', updatedQuantities)
     } else {
       // Add the activity to selected activities
-      updateFormField('selectedActivities', 
+      updateFormField('selectedActivities',
         [...formData.selectedActivities, activity]
       )
-      
+
       // Set default quantity to 1
       updateFormField('stickerQuantities', {
         ...formData.stickerQuantities,
@@ -57,41 +57,41 @@ export default function CreateCalendarPage() {
       })
     }
   }
-  
+
   const updateStickerQuantity = (activityId: string, quantity: number) => {
     if (quantity < 1) return // Don't allow quantities less than 1
-    
+
     updateFormField('stickerQuantities', {
       ...formData.stickerQuantities,
       [activityId]: quantity
     })
   }
-  
+
   const removeCustomActivity = (id: string) => {
-    updateFormField('customActivities', 
+    updateFormField('customActivities',
       formData.customActivities.filter(a => a.id !== id)
     )
-    
+
     // Also remove from selected activities
-    updateFormField('selectedActivities', 
+    updateFormField('selectedActivities',
       formData.selectedActivities.filter(a => a.id !== id)
     )
-    
+
     // Remove the quantity
     const updatedQuantities = { ...formData.stickerQuantities }
     delete updatedQuantities[id]
     updateFormField('stickerQuantities', updatedQuantities)
   }
-  
+
   const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    
+
     const reader = new FileReader()
     reader.onload = (event) => {
       if (event.target?.result) {
         setChildPhoto(event.target.result as string)
-        
+
         // Set default quantity for child photo
         updateFormField('stickerQuantities', {
           ...formData.stickerQuantities,
@@ -101,11 +101,11 @@ export default function CreateCalendarPage() {
     }
     reader.readAsDataURL(file)
   }
-  
+
   const handleBackgroundImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    
+
     const reader = new FileReader()
     reader.onload = (event) => {
       if (event.target?.result) {
@@ -114,44 +114,44 @@ export default function CreateCalendarPage() {
     }
     reader.readAsDataURL(file)
   }
-  
+
   const removeBackgroundImage = () => {
     updateFormField('backgroundImage', null)
   }
-  
+
   const handleSave = () => {
     // In a real app, this would save to a database or localStorage
     console.log('Saving calendar:', formData)
     alert('Calendrier sauvegardé avec succès!')
   }
-  
+
   // Navigation handlers
   const goToNextStep = () => {
     const nextStep = Math.min(currentStep + 1, totalSteps)
     setCurrentStep(nextStep)
     const newPreviewMode = nextStep === 2 ? 'stickers' : 'calendar'
-    
+
     if (formData.options.previewMode !== newPreviewMode) {
       updateFormField('options', { ...formData.options, previewMode: newPreviewMode })
     }
   }
-  
+
   const goToPrevStep = () => {
     const prevStep = Math.max(currentStep - 1, 1)
     setCurrentStep(prevStep)
     const newPreviewMode = prevStep === 2 ? 'stickers' : 'calendar'
-    
+
     if (formData.options.previewMode !== newPreviewMode) {
       updateFormField('options', { ...formData.options, previewMode: newPreviewMode })
     }
   }
-  
+
   // Days of the week in French
   const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
-  
+
   // Get theme classes based on the selected theme
   const themeClasses = getThemeClasses(formData.theme)
-  
+
   return (
     <>
       {/* Main content */}
@@ -175,7 +175,7 @@ export default function CreateCalendarPage() {
           <div className='flex-none xl:w-md'>
             {/* Step 1: Calendar Customization */}
             {currentStep === 1 && (
-              <Step1 
+              <Step1
                 formData={formData}
                 updateFormField={updateFormField}
                 onNextStep={goToNextStep}
@@ -184,10 +184,10 @@ export default function CreateCalendarPage() {
                 removeBackgroundImage={removeBackgroundImage}
               />
             )}
-            
+
             {/* Step 2: Stickers Customization */}
             {currentStep === 2 && (
-              <Step2 
+              <Step2
                 formData={formData}
                 updateFormField={updateFormField}
                 childPhoto={childPhoto}
@@ -201,10 +201,10 @@ export default function CreateCalendarPage() {
                 onPrevStep={goToPrevStep}
               />
             )}
-            
+
             {/* Step 3: Final Preview and Download */}
             {currentStep === 3 && (
-              <Step3 
+              <Step3
                 formData={formData}
                 updateFormField={updateFormField}
                 handleSave={handleSave}
@@ -214,10 +214,10 @@ export default function CreateCalendarPage() {
               />
             )}
           </div>
-          
+
           {/* Right side: Preview */}
-          <div className="flex-auto xl:sticky xl:top-8 xl:self-start">
-            <PreviewSection 
+          <div className="relative flex-auto xl:sticky xl:top-8 xl:self-start">
+            <PreviewSection
               formData={formData}
               updateFormField={updateFormField}
               childPhoto={childPhoto}

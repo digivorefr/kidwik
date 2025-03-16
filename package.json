@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@digivorefr/html2pdf.js": "^0.11.0",
     "@react-pdf/renderer": "^4.3.0",
     "clsx": "^2.1.1",
-    "html2pdf.js": "^0.10.3",
     "jotai": "^2.12.2",
     "motion": "^12.5.0",
     "next": "15.2.2",
