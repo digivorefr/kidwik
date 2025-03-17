@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { FadeIn } from '@/components/ui/motion'
 import { Step3Props } from './types'
-import html2pdf from '@digivorefr/html2pdf.js'
 
 function Step3({ handleSave }: Step3Props) {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
@@ -14,6 +13,9 @@ function Step3({ handleSave }: Step3Props) {
     setErrorMessage('')
 
     try {
+      // Dynamically import html2pdf only when needed (client-side only)
+      const html2pdf = (await import('@digivorefr/html2pdf.js')).default;
+
       // Récupérer les éléments uniquement par ID
       const calendarPreview = document.getElementById('calendar-preview');
       const stickersPreview = document.getElementById('stickers-preview');

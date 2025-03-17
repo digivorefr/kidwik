@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ChangeEvent, useCallback, useEffect } from 'react'
+import { useState, ChangeEvent, useCallback, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FadeIn } from '@/components/ui/motion'
 import {
@@ -21,7 +21,22 @@ import {
 } from '@/components/create-form'
 import useCalendarStore from '@/lib/store/calendar-store'
 
-export default function CreateCalendarPage() {
+// Loading component to show while suspended
+function CalendarEditorLoading() {
+  return (
+    <main className="flex-grow container mx-auto p-8 flex items-center justify-center">
+      <div className="text-center">
+        <svg className="animate-spin h-12 w-12 text-[var(--kiwi-dark)] mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p className="text-lg">Loading calendar editor...</p>
+      </div>
+    </main>
+  );
+}
+
+function CreateCalendarContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const calendarId = searchParams.get('id')
@@ -111,7 +126,7 @@ export default function CreateCalendarPage() {
     if (formData.options.previewMode !== newPreviewMode) {
       updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
     }
-  }, [currentStep, formData.options.previewMode, updateFormField, userModifiedPreviewMode]);
+  }, [currentStep, formData.options, updateFormField, userModifiedPreviewMode]);
 
   const totalSteps = 3
 
@@ -424,4 +439,12 @@ export default function CreateCalendarPage() {
       </main>
     </>
   )
+}
+
+export default function CreateCalendarPage() {
+  return (
+    <Suspense fallback={<CalendarEditorLoading />}>
+      <CreateCalendarContent />
+    </Suspense>
+  );
 }
