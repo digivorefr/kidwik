@@ -19,7 +19,7 @@ export default function CalendarPreview({ weekDays, themeClasses, backgroundImag
         className={cn(
           'calendar-preview',
           themeClasses.calendarBg,
-          'p-4 w-full h-full bg-cover bg-center flex rounded-xl'
+          'p-4 w-full h-full bg-cover bg-center flex rounded-xl m-0'
         )}
         style={{
           backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',

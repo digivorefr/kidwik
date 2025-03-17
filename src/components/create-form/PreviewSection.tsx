@@ -1,7 +1,31 @@
+'use client';
+
 import CalendarPreview from '@/components/calendar/CalendarPreview'
 import StickerSheet from '@/components/calendar/StickerSheet'
+import CoverPage from '@/components/calendar/CoverPage'
 import { PreviewSectionProps } from './types'
 import { useState, useEffect } from 'react'
+import {motion, Variants} from 'motion/react';
+import { PreviewMode } from '@/app/create/types'
+
+const containerVariants: Variants = {
+  hidden: { 
+    opacity: 0,
+    height: 0,
+    overflow: 'hidden',
+  },
+  visible: { 
+    opacity: 1,
+    height: 'auto',
+    transition: {
+      duration: 0.5,
+      ease: 'easeInOut',
+    },
+    transitionEnd: {
+      overflow: 'visible',
+    },
+  },
+}
 
 function PreviewSection({ 
   formData, 
@@ -11,7 +35,7 @@ function PreviewSection({
   weekDays 
 }: PreviewSectionProps) {
   // Track current display state locally, initialized from formData
-  const [currentView, setCurrentView] = useState<'calendar' | 'stickers'>(
+  const [currentView, setCurrentView] = useState<PreviewMode>(
     formData.options.previewMode || 'calendar'
   )
   
@@ -23,76 +47,93 @@ function PreviewSection({
   }, [formData.options.previewMode, currentView])
   
   // Toggle handler to update both local state and form data
-  const handleToggleView = (view: 'calendar' | 'stickers') => {
+  const handleToggleView = (view: PreviewMode) => {
     setCurrentView(view)
     updateFormField('options', { ...formData.options, previewMode: view })
   }
   
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Prévisualisation</h2>
-      
-      {/* Toggle between calendar and sticker sheet preview */}
-      <div className="mb-6 flex border rounded overflow-hidden">
-        <button 
-          className={`flex-1 py-2 px-4 cursor-pointer ${currentView === 'calendar' ? 'bg-gray-800 text-white font-medium' : ''}`}
-          onClick={() => handleToggleView('calendar')}
-          data-preview-mode-toggle="calendar"
-        >
-          Calendrier
-        </button>
-        <button 
-          className={`flex-1 py-2 px-4 cursor-pointer ${currentView === 'stickers' ? 'bg-gray-800 text-white font-medium' : ''}`}
-          onClick={() => handleToggleView('stickers')}
-          data-preview-mode-toggle="stickers"
-        >
-          Gommettes
-        </button>
+      {/* Header with title and toggle buttons */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <h2 className="text-xl font-semibold mb-4 sm:mb-0">Prévisualisation</h2>
+        
+        {/* Toggle buttons for preview modes */}
+        <div className="flex rounded-full bg-[var(--kiwi-dark)] p-0.5 self-center sm:self-auto">
+          <button 
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+              currentView === 'calendar' 
+                ? 'bg-white text-[var(--kiwi-darker)]' 
+                : 'text-white'
+            }`}
+            onClick={() => handleToggleView('calendar')}
+            data-preview-mode-toggle="calendar"
+          >
+            Calendrier
+          </button>
+          <button 
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+              currentView === 'stickers' 
+                ? 'bg-white text-[var(--kiwi-darker)]' 
+                : 'text-white'
+            }`}
+            onClick={() => handleToggleView('stickers')}
+            data-preview-mode-toggle="stickers"
+          >
+            Gommettes
+          </button>
+          <button 
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+              currentView === 'all' 
+                ? 'bg-white text-[var(--kiwi-darker)]' 
+                : 'text-white'
+            }`}
+            onClick={() => handleToggleView('all')}
+            data-preview-mode-toggle="all"
+          >
+            Tout
+          </button>
+        </div>
       </div>
       
       {/* Preview content */}
-      <div>
-        {currentView === 'calendar' ? (
-          <div className="calendar-preview-container">
-            <CalendarPreview 
-              weekDays={weekDays} 
-              themeClasses={themeClasses}
-              backgroundImage={formData.backgroundImage}
-            />
-          </div>
-        ) : (
-          <div className="stickers-preview-container">
-            <StickerSheet 
-              childPhoto={childPhoto} 
-              selectedActivities={formData.selectedActivities}
-              themeClasses={themeClasses}
-              stickerQuantities={formData.stickerQuantities}
-            />
-          </div>
-        )}
+      <div className="space-y-8">
+        <motion.div 
+          className="calendar-preview-container"
+          variants={containerVariants}
+          initial="hidden"
+          animate={currentView === 'calendar' || currentView === 'all' ? 'visible' : 'hidden'}
+        >
+          <CalendarPreview 
+            weekDays={weekDays} 
+            themeClasses={themeClasses}
+            backgroundImage={formData.backgroundImage}
+          />
+        </motion.div>
+        <motion.div 
+          className="stickers-preview-container"
+          variants={containerVariants}
+          initial="hidden"
+          animate={currentView === 'stickers' || currentView === 'all' ? 'visible' : 'hidden'}
+        >
+          <StickerSheet 
+            childPhoto={childPhoto} 
+            selectedActivities={formData.selectedActivities}
+            themeClasses={themeClasses}
+            stickerQuantities={formData.stickerQuantities}
+          />
+        </motion.div>
+        
+        {/* Cover page - hidden from UI but available for PDF */}
+        <div className="hidden">
+          <CoverPage themeClasses={themeClasses} />
+        </div>
       </div>
       
       <div className="print:hidden mt-4">
         <div className="text-xs text-gray-500 text-center">
           Format A4 paysage
         </div>
-      </div>
-      
-      {/* Print-only section that includes both calendar and stickers */}
-      <div className="hidden print:block mt-12 page-break-after-always">
-        <CalendarPreview 
-          weekDays={weekDays}
-          themeClasses={themeClasses}
-          backgroundImage={formData.backgroundImage}
-        />
-      </div>
-      <div className="hidden print:block mt-12">
-        <StickerSheet 
-          childPhoto={childPhoto}
-          selectedActivities={formData.selectedActivities}
-          themeClasses={themeClasses}
-          stickerQuantities={formData.stickerQuantities}
-        />
       </div>
     </div>
   )

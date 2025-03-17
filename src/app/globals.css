@@ -47,29 +47,51 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Playwrite IT Moderna", "Playwrite IT Moderna Fallback", sans-serif;
 }
 
+#stickers-preview h1,
+#stickers-preview h2, 
+#stickers-preview h3,
+#stickers-preview h4,
+#stickers-preview h5,
+#stickers-preview h6,
+.cover-page h1,
+.cover-page h2,
+.cover-page h3,
+.cover-page h4,
+.cover-page h5,
+.cover-page h6 {
+  font-family: "Playwrite IT Moderna", "Playwrite IT Moderna Fallback", sans-serif;
+}
+
 /* PDF specific styles */
 .pdf-page {
-  --page-margin: 6mm;
+  --page-margin: 4mm;
   position: relative;
   width: calc(297mm - var(--page-margin) * 2);
   height: calc(210mm - var(--page-margin) * 2);
   padding: 0;
-  margin: var(--page-margin);
+  /* margin: var(--page-margin); */
   background: white;
   display: block;
+}
 
-  &--stickers {
-    height: auto;
-    min-height: calc(210mm - var(--page-margin) * 2);
+.pdf-page--stickers {
+  height: auto;
+  min-height: calc(210mm - var(--page-margin) * 2);
+}
+
+/* Print styles */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
   }
-}
-
-/* Ensure stickers preview has proper spacing in PDF */
-.stickers-preview-container {
-  page-break-inside: avoid;
-}
-
-/* Ensure calendar has proper page break in PDF */
-.calendar-preview-container {
-  page-break-inside: avoid;
+  
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .page-break-after-always {
+    page-break-after: always;
+  }
 }

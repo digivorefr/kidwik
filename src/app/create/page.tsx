@@ -5,7 +5,8 @@ import { FadeIn } from '@/components/ui/motion'
 import {
   CalendarFormData,
   DEFAULT_FORM_DATA,
-  Activity
+  Activity,
+  PreviewMode
 } from './types'
 
 // Import the extracted components
@@ -129,20 +130,40 @@ export default function CreateCalendarPage() {
   const goToNextStep = () => {
     const nextStep = Math.min(currentStep + 1, totalSteps)
     setCurrentStep(nextStep)
-    const newPreviewMode = nextStep === 2 ? 'stickers' : 'calendar'
+    
+    // Define preview mode based on step
+    let newPreviewMode: PreviewMode;
+    
+    if (nextStep === 2) {
+      newPreviewMode = 'stickers';
+    } else if (nextStep === 3) {
+      newPreviewMode = 'all';
+    } else {
+      newPreviewMode = 'calendar';
+    }
 
     if (formData.options.previewMode !== newPreviewMode) {
-      updateFormField('options', { ...formData.options, previewMode: newPreviewMode })
+      updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
     }
   }
 
   const goToPrevStep = () => {
     const prevStep = Math.max(currentStep - 1, 1)
     setCurrentStep(prevStep)
-    const newPreviewMode = prevStep === 2 ? 'stickers' : 'calendar'
+    
+    // Define preview mode based on step
+    let newPreviewMode: PreviewMode;
+    
+    if (prevStep === 2) {
+      newPreviewMode = 'stickers';
+    } else if (prevStep === 3) {
+      newPreviewMode = 'all';
+    } else {
+      newPreviewMode = 'calendar';
+    }
 
     if (formData.options.previewMode !== newPreviewMode) {
-      updateFormField('options', { ...formData.options, previewMode: newPreviewMode })
+      updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
     }
   }
 

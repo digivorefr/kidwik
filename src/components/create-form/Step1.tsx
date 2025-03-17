@@ -94,7 +94,18 @@ function Step1({
   return (
     <FadeIn>
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Personnalisation du calendrier</h2>
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between mb-6">
+          <h2 className="text-xl font-semibold mt-4 sm:mt-0 sm:mb-0">Personnalisation du calendrier</h2>
+          
+          <div className="flex sm:ml-4 whitespace-nowrap">
+            <button
+              onClick={onNextStep}
+              className="btn-primary px-4 py-1.5 text-sm rounded-full font-medium"
+            >
+              Continuer
+            </button>
+          </div>
+        </div>
         
         <div className="space-y-6">
           <div>
@@ -196,15 +207,6 @@ function Step1({
               ))}
             </div>
           </div>
-        </div>
-        
-        <div className="mt-8 flex justify-end">
-          <button
-            onClick={onNextStep}
-            className="btn-primary px-6 py-2 rounded-lg font-medium"
-          >
-            Continuer
-          </button>
         </div>
       </div>
     </FadeIn>

@@ -123,11 +123,28 @@ function Step2({
   return (
     <FadeIn>
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Personnalisation des gommettes</h2>
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between mb-6">
+          <h2 className="text-xl font-semibold mt-4 sm:mt-0 sm:mb-0">Personnalisation des gommettes</h2>
+          
+          <div className="flex gap-2 sm:ml-4 whitespace-nowrap">
+            <button
+              onClick={onPrevStep}
+              className="px-4 py-1.5 rounded-full text-sm border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium"
+            >
+              Retour
+            </button>
+            <button
+              onClick={onNextStep}
+              className="btn-primary px-4 py-1.5 rounded-full text-sm font-medium"
+            >
+              Continuer
+            </button>
+          </div>
+        </div>
         
         <div className="space-y-6">
           <div>
-            <h3 className="font-medium mb-3">Photo de l&apos;enfant</h3>
+            <h3 className="font-medium mb-3">Gommette portrait de votre enfant</h3>
             <div className="flex flex-col space-y-4">
               <div className="flex items-center gap-4">
                 <label className="flex-1 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-50">
@@ -160,76 +177,112 @@ function Step2({
               {childPhoto && renderQuantityControls('childPhoto')}
               
               <div className="text-sm text-gray-500">
-                Cette photo sera utilisée comme gommette à découper et à placer sur le calendrier.
+                Cette gommette représente votre enfant et sera déplacée chaque jour sur le calendrier. C&apos;est un élément central qui permet à votre enfant de se repérer plus facilement dans sa semaine.
               </div>
             </div>
           </div>
           
           <div>
-            <h3 className="font-medium mb-3">Activités</h3>
-            <p className="text-sm text-gray-600 mb-3">Sélectionnez les activités et choisissez combien de gommettes de chaque type vous souhaitez imprimer.</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {/* Preset activities */}
-              {PRESET_ACTIVITIES.map(activity => (
-                <label key={activity.id} className="cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="sr-only peer"
-                    checked={formData.selectedActivities.some(a => a.id === activity.id)}
-                    onChange={() => handleActivityToggle(activity)}
-                  />
-                  <div className="flex flex-col items-center space-y-2 p-2 rounded-lg border-2 border-transparent peer-checked:border-[var(--kiwi-dark)] peer-checked:bg-[var(--kiwi-light)]/20">
-                    <StickerPreview 
-                      activity={activity} 
-                      themeClasses={themeClasses}
-                    />
-                    <span className="text-sm">{activity.name}</span>
-                    {renderQuantityControls(activity.id)}
-                  </div>
-                </label>
-              ))}
-              
-              {/* Custom activities that were already added */}
-              {formData.customActivities.map(activity => (
-                <div key={activity.id} className="relative">
-                  <label className="cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer"
-                      checked={formData.selectedActivities.some(a => a.id === activity.id)}
-                      onChange={() => handleActivityToggle(activity)}
-                    />
-                    <div className="flex flex-col items-center space-y-2 p-2 rounded-lg border-2 border-transparent peer-checked:border-[var(--kiwi-dark)] peer-checked:bg-[var(--kiwi-light)]/20">
-                      <StickerPreview 
-                        activity={activity} 
-                        themeClasses={themeClasses}
-                      />
-                      <span className="text-sm">{activity.name}</span>
-                      {renderQuantityControls(activity.id)}
-                    </div>
-                  </label>
-                  <button 
-                    onClick={() => removeCustomActivity(activity.id)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                    aria-label="Supprimer"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-              
-              {/* Add custom activity button */}
+            <h3 className="font-medium mb-3">Gommettes</h3>
+            <p className="text-sm text-gray-600 mb-3">Sélectionnez les gommettes et choisissez combien d&apos;exemplaires de chaque type vous souhaitez imprimer.</p>
+            
+            {/* Add custom activity button - Now in first position in a separate block */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+              <p className="text-sm text-gray-600 mb-3">
+                Personnalisez avec des photos des lieux familiers (école, crèche, parc préféré...) pour que votre enfant s&apos;identifie plus facilement à son calendrier.
+              </p>
               <button 
                 onClick={() => setIsModalOpen(true)} 
-                className="flex flex-col items-center justify-center space-y-2 p-4 h-full border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-gray-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
+                  <span className="text-sm font-medium text-gray-600">Ajouter une gommette personnalisée</span>
                 </div>
-                <span className="text-sm text-gray-600">Ajouter</span>
               </button>
+            </div>
+            
+            {/* Custom activities in a separate block */}
+            {formData.customActivities.length > 0 && (
+              <div className="mb-4">
+                <h4 className="text-sm font-medium mb-3">Mes gommettes personnalisées</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {formData.customActivities.map(activity => (
+                    <div key={activity.id} className="relative">
+                      <label className="cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          className="sr-only peer"
+                          checked={formData.selectedActivities.some(a => a.id === activity.id)}
+                          onChange={() => handleActivityToggle(activity)}
+                        />
+                        <div className="flex flex-col items-center space-y-2 p-2 rounded-lg border-2 border-transparent peer-checked:border-[var(--kiwi-dark)] peer-checked:bg-[var(--kiwi-light)]/20">
+                          <StickerPreview 
+                            activity={activity} 
+                            themeClasses={themeClasses}
+                          />
+                          <span className="text-sm">{activity.name}</span>
+                          {renderQuantityControls(activity.id)}
+                        </div>
+                      </label>
+                      <button 
+                        onClick={() => removeCustomActivity(activity.id)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                        aria-label="Supprimer"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Preset activities in a separate block */}
+            <div>
+              <h4 className="text-sm font-medium mb-3">Gommettes prédéfinies</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {PRESET_ACTIVITIES.map(activity => {
+                  const isSelected = formData.selectedActivities.some(a => a.id === activity.id);
+                  
+                  return (
+                    <div key={activity.id} className="relative">
+                      <label className="cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          className="sr-only peer"
+                          checked={isSelected}
+                          onChange={() => {
+                            // Seulement permettre la sélection (pas la désélection) par le clic
+                            if (!isSelected) {
+                              handleActivityToggle(activity);
+                            }
+                          }}
+                        />
+                        <div className="flex flex-col items-center space-y-2 p-2 rounded-lg border-2 border-transparent peer-checked:border-[var(--kiwi-dark)] peer-checked:bg-[var(--kiwi-light)]/20">
+                          <StickerPreview 
+                            activity={activity} 
+                            themeClasses={themeClasses}
+                          />
+                          <span className="text-sm">{activity.name}</span>
+                          {renderQuantityControls(activity.id)}
+                        </div>
+                      </label>
+                      {isSelected && (
+                        <button 
+                          onClick={() => handleActivityToggle(activity)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                          aria-label="Supprimer"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -240,7 +293,7 @@ function Step2({
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-medium">Ajouter une activité personnalisée</h3>
+                  <h3 className="text-lg font-medium">Ajouter une gommette personnalisée</h3>
                   <button 
                     onClick={() => {
                       setIsModalOpen(false)
@@ -259,7 +312,7 @@ function Step2({
                     className={`px-4 py-2 ${modalTab === 'upload' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
                     onClick={() => setModalTab('upload')}
                   >
-                    Uploader une image
+                    Uploader une photo
                   </button>
                   <button
                     className={`px-4 py-2 ${modalTab === 'icons' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
@@ -337,21 +390,6 @@ function Step2({
             </div>
           </div>
         )}
-        
-        <div className="mt-8 flex justify-between">
-          <button
-            onClick={onPrevStep}
-            className="px-6 py-2 rounded-lg border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium"
-          >
-            Retour
-          </button>
-          <button
-            onClick={onNextStep}
-            className="btn-primary px-6 py-2 rounded-lg font-medium"
-          >
-            Continuer
-          </button>
-        </div>
       </div>
     </FadeIn>
   )

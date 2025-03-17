@@ -19,6 +19,9 @@ export type TailwindColor =
   'teal' | 'cyan' | 'sky' | 'blue' | 'indigo' | 'violet' | 'purple' | 
   'fuchsia' | 'pink' | 'rose' | 'slate' | 'gray' | 'zinc' | 'neutral' | 'stone'
 
+// Define the PreviewMode type for consistent use across the application
+export type PreviewMode = 'calendar' | 'stickers' | 'all'
+
 export interface CalendarFormData {
   days: DayOfWeek[]
   selectedActivities: Activity[]
@@ -29,7 +32,7 @@ export interface CalendarFormData {
   options: {
     includeStickers: boolean
     includeIllustrations: boolean
-    previewMode?: 'calendar' | 'stickers'
+    previewMode?: PreviewMode
   }
 }
 
