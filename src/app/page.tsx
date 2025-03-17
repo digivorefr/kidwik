@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { FadeIn, ScaleIn } from '@/components/ui/motion'
+import SavedCalendarsList from '@/components/calendar/SavedCalendarsList'
 
 export default function Home() {
   return (
@@ -24,7 +25,7 @@ export default function Home() {
           <FadeIn delay={0.2}>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
-                href="/create" 
+                href="/create/new" 
                 className="btn-primary px-6 py-3 rounded-lg text-center font-medium"
               >
                 Créer mon calendrier
@@ -52,9 +53,7 @@ export default function Home() {
       {/* Saved calendars section (conditionally rendered) */}
       <section id="saved-calendars" className="container mx-auto p-8 mb-12">
         <h2 className="text-2xl font-bold text-[var(--kiwi-darker)] mb-6">Mes calendriers sauvegardés</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* This will be populated dynamically */}
-        </div>
+        <SavedCalendarsList />
       </section>
     </>
   )
