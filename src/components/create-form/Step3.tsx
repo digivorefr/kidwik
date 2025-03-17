@@ -43,7 +43,7 @@ function Step3({ handleSave, onPrevStep }: Step3Props) {
           </div>
 
           <!-- Deuxième page : Gommettes -->
-          <div class="pdf-page">
+          <div class="pdf-page pdf-page--stickers">
             ${stickersHtml}
           </div>
         </div>

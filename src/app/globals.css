@@ -57,22 +57,10 @@ h1, h2, h3, h4, h5, h6 {
   margin: var(--page-margin);
   background: white;
   display: block;
-}
 
-/* Hide certain elements when printing/generating PDF */
-@media print {
-  .print\:hidden {
-    display: none !important;
-  }
-
-  body * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  .pdf-page {
-    page-break-after: always;
-    box-shadow: none !important;
+  &--stickers {
+    height: auto;
+    min-height: calc(210mm - var(--page-margin) * 2);
   }
 }
 

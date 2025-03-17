@@ -24,15 +24,13 @@ export default function StickerPreview({ activity, themeClasses }: StickerPrevie
 
   // Sinon, afficher l'emoji comme avant
   return (
-    <div id="stickers-preview">
-      <div className={cn(
-        'sticker-preview',
-        themeClasses.stickerBg,
-        'w-[2cm] h-[2cm] rounded-full flex items-center justify-center border-4',
-        themeClasses.stickerBorder
-      )}>
-        <span className="text-[2.25cqw]">{activity.icon}</span>
-      </div>
+    <div className={cn(
+      'sticker-preview',
+      themeClasses.stickerBg,
+      'w-[2cm] h-[2cm] rounded-full flex items-center justify-center border-4',
+      themeClasses.stickerBorder
+    )}>
+      <span className="text-[2.25cqw]">{activity.icon}</span>
     </div>
   )
 }
