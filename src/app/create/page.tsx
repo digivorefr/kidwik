@@ -12,7 +12,13 @@ import {
 
 // Import the extracted components
 import { getThemeClasses } from '@/components/calendar/types'
-import { Step1, Step2, Step3, PreviewSection, ProgressIndicator } from '@/components/create-form'
+import {
+  Step1,
+  Step2,
+  Step3,
+  PreviewSection,
+  AccordionStep
+} from '@/components/create-form'
 import useCalendarStore from '@/lib/store/calendar-store'
 
 export default function CreateCalendarPage() {
@@ -27,6 +33,14 @@ export default function CreateCalendarPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const { loadCalendar, saveCurrentCalendar, setCurrentCalendarId } = useCalendarStore()
+
+  // Helper functions for form updates
+  const updateFormField = useCallback((field: keyof CalendarFormData, value: unknown) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }, [])
+
+  // État pour suivre si l'utilisateur a modifié manuellement le mode de prévisualisation
+  const [userModifiedPreviewMode, setUserModifiedPreviewMode] = useState(false)
 
   // Charge le calendrier existant ou redirige vers la page de création
   useEffect(() => {
@@ -77,6 +91,28 @@ export default function CreateCalendarPage() {
     return () => clearTimeout(saveCalendarDebounced)
   }, [formData, childPhoto, calendarId, isLoading, saveCurrentCalendar])
 
+  // Synchroniser le mode de prévisualisation avec l'étape actuelle
+  // mais seulement si le mode n'a pas été manuellement changé par l'utilisateur
+  useEffect(() => {
+    // Ne pas synchroniser si l'utilisateur a modifié manuellement le mode de prévisualisation
+    if (userModifiedPreviewMode) return;
+
+    // Déterminer le mode de prévisualisation en fonction de l'étape actuelle
+    let newPreviewMode: PreviewMode;
+    if (currentStep === 2) {
+      newPreviewMode = 'stickers';
+    } else if (currentStep === 3) {
+      newPreviewMode = 'all';
+    } else {
+      newPreviewMode = 'calendar';
+    }
+
+    // Mettre à jour le mode de prévisualisation si nécessaire
+    if (formData.options.previewMode !== newPreviewMode) {
+      updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
+    }
+  }, [currentStep, formData.options.previewMode, updateFormField, userModifiedPreviewMode]);
+
   const totalSteps = 3
 
   // Available icons for custom activities
@@ -85,11 +121,6 @@ export default function CreateCalendarPage() {
     '🎻', '🏀', '⚽', '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '⛳', '🏓', '🏸',
     '🚲', '🛹', '🛼', '⛸️', '🥏', '🎣', '🎲', '🧩', '🧸', '🪁', '🎈', '🎁'
   ]
-
-  // Helper functions for form updates
-  const updateFormField = useCallback((field: keyof CalendarFormData, value: unknown) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }, [])
 
   const handleActivityToggle = (activity: Activity) => {
     const isSelected = formData.selectedActivities.some(a => a.id === activity.id)
@@ -194,42 +225,80 @@ export default function CreateCalendarPage() {
   // Navigation handlers
   const goToNextStep = () => {
     const nextStep = Math.min(currentStep + 1, totalSteps)
-    setCurrentStep(nextStep)
-    
-    // Define preview mode based on step
-    let newPreviewMode: PreviewMode;
-    
-    if (nextStep === 2) {
-      newPreviewMode = 'stickers';
-    } else if (nextStep === 3) {
-      newPreviewMode = 'all';
-    } else {
-      newPreviewMode = 'calendar';
-    }
 
-    if (formData.options.previewMode !== newPreviewMode) {
-      updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
-    }
+    // Si l'étape ne change pas, ne rien faire
+    if (nextStep === currentStep) return
+
+    // Défiler vers le haut avant de changer d'étape
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+    // Attendre que le défilement soit terminé avant de mettre à jour l'étape
+    setTimeout(() => {
+      setCurrentStep(nextStep)
+
+      // Define preview mode based on step
+      let newPreviewMode: PreviewMode;
+
+      if (nextStep === 2) {
+        newPreviewMode = 'stickers';
+      } else if (nextStep === 3) {
+        newPreviewMode = 'all';
+      } else {
+        newPreviewMode = 'calendar';
+      }
+
+      if (formData.options.previewMode !== newPreviewMode) {
+        updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
+      }
+    }, 600); // Délai similaire à celui dans AccordionStep
   }
 
   const goToPrevStep = () => {
     const prevStep = Math.max(currentStep - 1, 1)
-    setCurrentStep(prevStep)
-    
-    // Define preview mode based on step
-    let newPreviewMode: PreviewMode;
-    
-    if (prevStep === 2) {
-      newPreviewMode = 'stickers';
-    } else if (prevStep === 3) {
-      newPreviewMode = 'all';
-    } else {
-      newPreviewMode = 'calendar';
-    }
 
-    if (formData.options.previewMode !== newPreviewMode) {
-      updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
-    }
+    // Si l'étape ne change pas, ne rien faire
+    if (prevStep === currentStep) return
+
+    // Défiler vers le haut avant de changer d'étape
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+    // Attendre que le défilement soit terminé avant de mettre à jour l'étape
+    setTimeout(() => {
+      setCurrentStep(prevStep)
+
+      // Define preview mode based on step
+      let newPreviewMode: PreviewMode;
+
+      if (prevStep === 2) {
+        newPreviewMode = 'stickers';
+      } else if (prevStep === 3) {
+        newPreviewMode = 'all';
+      } else {
+        newPreviewMode = 'calendar';
+      }
+
+      if (formData.options.previewMode !== newPreviewMode) {
+        updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
+      }
+    }, 600); // Délai similaire à celui dans AccordionStep
+  }
+
+  // Fonction pour changer manuellement le mode de prévisualisation
+  const handlePreviewModeChange = (mode: PreviewMode) => {
+    setUserModifiedPreviewMode(true);
+    updateFormField('options', { ...formData.options, previewMode: mode });
+
+    // Réinitialiser après un certain délai pour permettre la synchronisation automatique
+    // lors du prochain changement d'étape
+    setTimeout(() => {
+      setUserModifiedPreviewMode(false);
+    }, 3000); // Réinitialise après 3 secondes d'inactivité
   }
 
   // Days of the week in French
@@ -267,11 +336,11 @@ export default function CreateCalendarPage() {
                 Personnalisez votre calendrier hebdomadaire pour enfants en quelques étapes simples.
               </p>
             </div>
-            
+
             <div className="mt-4 md:mt-0">
               <button
                 onClick={handleSave}
-                className="px-4 py-2 rounded-full text-sm border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium hover:bg-[var(--kiwi-light)] transition-colors"
+                className="px-4 py-2 rounded-full text-sm border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium hover:bg-[var(--kiwi-light)] transition-colors cursor-pointer"
               >
                 Sauvegarder
               </button>
@@ -279,14 +348,17 @@ export default function CreateCalendarPage() {
           </div>
         </FadeIn>
 
-        {/* Progress indicator */}
-        <ProgressIndicator currentStep={currentStep} totalSteps={totalSteps} />
 
         <div className="grid xl:flex gap-8">
           {/* Left side: Form Steps */}
           <div className='flex-none xl:w-md'>
             {/* Step 1: Calendar Customization */}
-            {currentStep === 1 && (
+            <AccordionStep
+              step={1}
+              currentStep={currentStep}
+              title="1. Personnalisation du calendrier"
+              onStepChange={setCurrentStep}
+            >
               <Step1
                 formData={formData}
                 updateFormField={updateFormField}
@@ -295,10 +367,15 @@ export default function CreateCalendarPage() {
                 handleBackgroundImageUpload={handleBackgroundImageUpload}
                 removeBackgroundImage={removeBackgroundImage}
               />
-            )}
+            </AccordionStep>
 
-            {/* Step 2: Stickers Customization */}
-            {currentStep === 2 && (
+            {/* Step 2: Photo and Activities */}
+            <AccordionStep
+              step={2}
+              currentStep={currentStep}
+              title="2. Photo et activités"
+              onStepChange={setCurrentStep}
+            >
               <Step2
                 formData={formData}
                 updateFormField={updateFormField}
@@ -312,10 +389,15 @@ export default function CreateCalendarPage() {
                 onNextStep={goToNextStep}
                 onPrevStep={goToPrevStep}
               />
-            )}
+            </AccordionStep>
 
             {/* Step 3: Final Preview and Download */}
-            {currentStep === 3 && (
+            <AccordionStep
+              step={3}
+              currentStep={currentStep}
+              title="3. Aperçu final et téléchargement"
+              onStepChange={setCurrentStep}
+            >
               <Step3
                 formData={formData}
                 updateFormField={updateFormField}
@@ -324,7 +406,7 @@ export default function CreateCalendarPage() {
                 onNextStep={goToNextStep}
                 onPrevStep={goToPrevStep}
               />
-            )}
+            </AccordionStep>
           </div>
 
           {/* Right side: Preview */}
@@ -335,6 +417,7 @@ export default function CreateCalendarPage() {
               childPhoto={childPhoto}
               themeClasses={themeClasses}
               weekDays={weekDays}
+              onPreviewModeChange={handlePreviewModeChange}
             />
           </div>
         </div>

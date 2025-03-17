@@ -16,25 +16,23 @@ function Step2({
   removeCustomActivity,
   availableIcons,
   themeClasses,
-  onNextStep,
-  onPrevStep
 }: Step2Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalTab, setModalTab] = useState<'upload' | 'icons'>('upload')
   const [customImage, setCustomImage] = useState<string | null>(null)
-  
+
   // Helper function for quantity controls
   const renderQuantityControls = (activityId: string) => {
     const isSelected = formData.selectedActivities.some(a => a.id === activityId) || (activityId === 'childPhoto' && childPhoto)
     if (!isSelected) return null
-    
+
     const quantity = formData.stickerQuantities[activityId] || 1
-    
+
     return (
       <div className="flex items-center justify-center mt-1 bg-gray-100 rounded px-1 py-0.5">
         <button
           type="button"
-          className="w-5 h-5 flex items-center justify-center rounded-full bg-white hover:bg-gray-200 border border-gray-300 text-gray-500"
+          className="w-5 h-5 flex items-center justify-center rounded-full bg-white hover:bg-gray-200 border border-gray-300 text-gray-500 cursor-pointer"
           onClick={(e) => {
             e.preventDefault(); // Prevent checkbox toggle
             e.stopPropagation();
@@ -50,7 +48,7 @@ function Step2({
         </div>
         <button
           type="button"
-          className="w-5 h-5 flex items-center justify-center rounded-full bg-white hover:bg-gray-200 border border-gray-300 text-gray-500"
+          className="w-5 h-5 flex items-center justify-center rounded-full bg-white hover:bg-gray-200 border border-gray-300 text-gray-500 cursor-pointer"
           onClick={(e) => {
             e.preventDefault(); // Prevent checkbox toggle
             e.stopPropagation();
@@ -63,11 +61,11 @@ function Step2({
       </div>
     )
   }
-  
+
   const handleCustomImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    
+
     const reader = new FileReader()
     reader.onload = (event) => {
       if (event.target?.result) {
@@ -76,7 +74,7 @@ function Step2({
     }
     reader.readAsDataURL(file)
   }
-  
+
   const addCustomImageActivity = () => {
     if (customImage) {
       const newActivity = {
@@ -84,64 +82,46 @@ function Step2({
         name: 'Personnalisé',
         icon: customImage
       }
-      
+
       updateFormField('customActivities', [...formData.customActivities, newActivity])
       updateFormField('selectedActivities', [...formData.selectedActivities, newActivity])
-      
+
       // Set default quantity to 1
       updateFormField('stickerQuantities', {
         ...formData.stickerQuantities,
         [newActivity.id]: 1
       })
-      
+
       // Reset and close
       setCustomImage(null)
       setIsModalOpen(false)
     }
   }
-  
+
   const addCustomIconActivity = (icon: string) => {
     const newActivity = {
       id: `custom-icon-${Date.now()}`,
       name: 'Personnalisé',
       icon
     }
-    
+
     updateFormField('customActivities', [...formData.customActivities, newActivity])
     updateFormField('selectedActivities', [...formData.selectedActivities, newActivity])
-    
+
     // Set default quantity to 1
     updateFormField('stickerQuantities', {
       ...formData.stickerQuantities,
       [newActivity.id]: 1
     })
-    
+
     // Close modal
     setIsModalOpen(false)
   }
-  
+
   return (
     <FadeIn>
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h2 className="text-xl font-semibold mt-4 sm:mt-0 sm:mb-0">Personnalisation des gommettes</h2>
-          
-          <div className="flex gap-2 sm:ml-4 whitespace-nowrap">
-            <button
-              onClick={onPrevStep}
-              className="px-4 py-1.5 rounded-full text-sm border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium"
-            >
-              Retour
-            </button>
-            <button
-              onClick={onNextStep}
-              className="btn-primary px-4 py-1.5 rounded-full text-sm font-medium"
-            >
-              Continuer
-            </button>
-          </div>
-        </div>
-        
+
         <div className="space-y-6">
           <div>
             <h3 className="font-medium mb-3">Gommette portrait de votre enfant</h3>
@@ -156,44 +136,44 @@ function Step2({
                       JPG, PNG (max. 5 Mo)
                     </p>
                   </div>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    className="hidden" 
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
                     onChange={handlePhotoUpload}
                   />
                 </label>
-                
+
                 {childPhoto && (
                   <div className="flex items-center justify-center">
-                    <ImageStickerPreview 
-                      image={childPhoto} 
+                    <ImageStickerPreview
+                      image={childPhoto}
                       themeClasses={themeClasses}
                     />
                   </div>
                 )}
               </div>
-              
+
               {childPhoto && renderQuantityControls('childPhoto')}
-              
+
               <div className="text-sm text-gray-500">
                 Cette gommette représente votre enfant et sera déplacée chaque jour sur le calendrier. C&apos;est un élément central qui permet à votre enfant de se repérer plus facilement dans sa semaine.
               </div>
             </div>
           </div>
-          
+
           <div>
             <h3 className="font-medium mb-3">Gommettes</h3>
             <p className="text-sm text-gray-600 mb-3">Sélectionnez les gommettes et choisissez combien d&apos;exemplaires de chaque type vous souhaitez imprimer.</p>
-            
+
             {/* Add custom activity button - Now in first position in a separate block */}
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
               <p className="text-sm text-gray-600 mb-3">
                 Personnalisez avec des photos des lieux familiers (école, crèche, parc préféré...) pour que votre enfant s&apos;identifie plus facilement à son calendrier.
               </p>
-              <button 
-                onClick={() => setIsModalOpen(true)} 
-                className="flex items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <div className="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -203,7 +183,7 @@ function Step2({
                 </div>
               </button>
             </div>
-            
+
             {/* Custom activities in a separate block */}
             {formData.customActivities.length > 0 && (
               <div className="mb-4">
@@ -212,22 +192,22 @@ function Step2({
                   {formData.customActivities.map(activity => (
                     <div key={activity.id} className="relative">
                       <label className="cursor-pointer">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           className="sr-only peer"
                           checked={formData.selectedActivities.some(a => a.id === activity.id)}
                           onChange={() => handleActivityToggle(activity)}
                         />
                         <div className="flex flex-col items-center space-y-2 p-2 rounded-lg border-2 border-transparent peer-checked:border-[var(--kiwi-dark)] peer-checked:bg-[var(--kiwi-light)]/20">
-                          <StickerPreview 
-                            activity={activity} 
+                          <StickerPreview
+                            activity={activity}
                             themeClasses={themeClasses}
                           />
                           <span className="text-sm">{activity.name}</span>
                           {renderQuantityControls(activity.id)}
                         </div>
                       </label>
-                      <button 
+                      <button
                         onClick={() => removeCustomActivity(activity.id)}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                         aria-label="Supprimer"
@@ -239,19 +219,19 @@ function Step2({
                 </div>
               </div>
             )}
-            
+
             {/* Preset activities in a separate block */}
             <div>
               <h4 className="text-sm font-medium mb-3">Gommettes prédéfinies</h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {PRESET_ACTIVITIES.map(activity => {
                   const isSelected = formData.selectedActivities.some(a => a.id === activity.id);
-                  
+
                   return (
                     <div key={activity.id} className="relative">
                       <label className="cursor-pointer">
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           className="sr-only peer"
                           checked={isSelected}
                           onChange={() => {
@@ -262,8 +242,8 @@ function Step2({
                           }}
                         />
                         <div className="flex flex-col items-center space-y-2 p-2 rounded-lg border-2 border-transparent peer-checked:border-[var(--kiwi-dark)] peer-checked:bg-[var(--kiwi-light)]/20">
-                          <StickerPreview 
-                            activity={activity} 
+                          <StickerPreview
+                            activity={activity}
                             themeClasses={themeClasses}
                           />
                           <span className="text-sm">{activity.name}</span>
@@ -271,7 +251,7 @@ function Step2({
                         </div>
                       </label>
                       {isSelected && (
-                        <button 
+                        <button
                           onClick={() => handleActivityToggle(activity)}
                           className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                           aria-label="Supprimer"
@@ -286,7 +266,7 @@ function Step2({
             </div>
           </div>
         </div>
-        
+
         {/* Modal for adding custom activities */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-md bg-opacity-50 flex items-center justify-center z-50">
@@ -294,7 +274,7 @@ function Step2({
               <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-medium">Ajouter une gommette personnalisée</h3>
-                  <button 
+                  <button
                     onClick={() => {
                       setIsModalOpen(false)
                       setCustomImage(null)
@@ -306,7 +286,7 @@ function Step2({
                     </svg>
                   </button>
                 </div>
-                
+
                 <div className="mb-4 flex shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.1)]">
                   <button
                     className={`px-4 py-2 ${modalTab === 'upload' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
@@ -321,16 +301,16 @@ function Step2({
                     Choisir un pictogramme
                   </button>
                 </div>
-                
+
                 {modalTab === 'upload' && (
                   <div className="space-y-4">
                     {customImage ? (
                       <div className="space-y-4">
                         <div className="flex justify-center">
                           <div className="w-32 h-32 relative border rounded-lg overflow-hidden">
-                            <Image 
-                              src={customImage} 
-                              alt="Image personnalisée" 
+                            <Image
+                              src={customImage}
+                              alt="Image personnalisée"
                               className="object-cover object-center w-full h-full"
                               fill
                             />
@@ -360,9 +340,9 @@ function Step2({
                           <p className="text-gray-700 font-medium">Cliquez pour choisir une image</p>
                           <p className="text-sm text-gray-500 mt-1">JPG, PNG (max. 5 Mo)</p>
                         </div>
-                        <input 
-                          type="file" 
-                          accept="image/*" 
+                        <input
+                          type="file"
+                          accept="image/*"
                           className="hidden"
                           onChange={handleCustomImageUpload}
                         />
@@ -370,7 +350,7 @@ function Step2({
                     )}
                   </div>
                 )}
-                
+
                 {modalTab === 'icons' && (
                   <div className="space-y-4">
                     <div className="grid grid-cols-4 md:grid-cols-6 gap-4 max-h-64 overflow-y-auto pr-4">

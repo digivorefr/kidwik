@@ -11,16 +11,16 @@ export default function NewCalendarPage() {
   const { createNewCalendar, isLoading } = useCalendarStore();
   const [calendarName, setCalendarName] = useState('Mon calendrier');
   const [error, setError] = useState('');
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!calendarName.trim()) {
       setError("Veuillez donner un nom à votre calendrier");
       return;
     }
-    
+
     try {
       const meta = await createNewCalendar(calendarName.trim());
       // Redirection vers l'éditeur avec l'ID du nouveau calendrier
@@ -30,7 +30,7 @@ export default function NewCalendarPage() {
       console.error(err);
     }
   };
-  
+
   return (
     <main className="flex-grow container mx-auto p-8">
       <FadeIn>
@@ -43,12 +43,12 @@ export default function NewCalendarPage() {
               Donnez un nom à votre calendrier pour commencer
             </p>
           </div>
-          
+
           <div className="bg-white p-6 rounded-lg shadow-md">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label 
-                  htmlFor="calendar-name" 
+                <label
+                  htmlFor="calendar-name"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Nom du calendrier
@@ -64,18 +64,18 @@ export default function NewCalendarPage() {
                   disabled={isLoading}
                 />
               </div>
-              
+
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800">
                   {error}
                 </div>
               )}
-              
+
               <div className="flex space-x-4">
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="btn-primary px-6 py-3 rounded-lg text-center font-medium flex-1 flex justify-center items-center"
+                  className="btn-primary px-6 py-3 rounded-lg text-center font-medium flex-1 flex justify-center items-center cursor-pointer"
                 >
                   {isLoading ? (
                     <>
@@ -89,7 +89,7 @@ export default function NewCalendarPage() {
                     'Créer et continuer'
                   )}
                 </button>
-                
+
                 <Link
                   href="/"
                   className="px-6 py-3 rounded-lg text-center border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium"

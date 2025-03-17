@@ -4,15 +4,14 @@ import { FadeIn } from '@/components/ui/motion'
 import { FormStepProps } from './types'
 import { TailwindColor } from '@/app/create/types'
 
-function Step1({ 
-  formData, 
-  updateFormField, 
-  onNextStep, 
-  handleBackgroundImageUpload, 
-  removeBackgroundImage 
+function Step1({
+  formData,
+  updateFormField,
+  handleBackgroundImageUpload,
+  removeBackgroundImage
 }: FormStepProps) {
   const [isUploading, setIsUploading] = useState(false)
-  
+
   // Définir le type pour les groupes de couleurs
   type ColorGroupName = 'Rouge/Orange/Jaune' | 'Vert' | 'Bleu' | 'Violet/Rose' | 'Gris';
   const [selectedColorGroup, setSelectedColorGroup] = useState<ColorGroupName | null>(null)
@@ -52,7 +51,7 @@ function Step1({
       'neutral': 'bg-neutral-500 border-neutral-600',
       'stone': 'bg-stone-500 border-stone-600'
     }
-    
+
     return colorMap[color]
   }
 
@@ -82,31 +81,19 @@ function Step1({
       'neutral': 'Neutre',
       'stone': 'Pierre'
     }
-    
+
     return nameMap[color]
   }
 
   // Tous les groupes de couleurs ou juste un groupe spécifique sélectionné
-  const colorsToDisplay = selectedColorGroup 
-    ? colorGroups[selectedColorGroup] 
+  const colorsToDisplay = selectedColorGroup
+    ? colorGroups[selectedColorGroup]
     : Object.values(colorGroups).flat()
 
   return (
     <FadeIn>
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h2 className="text-xl font-semibold mt-4 sm:mt-0 sm:mb-0">Personnalisation du calendrier</h2>
-          
-          <div className="flex sm:ml-4 whitespace-nowrap">
-            <button
-              onClick={onNextStep}
-              className="btn-primary px-4 py-1.5 text-sm rounded-full font-medium"
-            >
-              Continuer
-            </button>
-          </div>
-        </div>
-        
+
         <div className="space-y-6">
           <div>
             <p className="text-sm text-gray-500">
@@ -120,8 +107,8 @@ function Step1({
               {formData.backgroundImage ? (
                 <div className="space-y-3">
                   <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden">
-                    <Image 
-                      src={formData.backgroundImage || ''} 
+                    <Image
+                      src={formData.backgroundImage || ''}
                       alt="Fond du calendrier"
                       className="object-cover"
                       fill
@@ -130,7 +117,7 @@ function Step1({
                   </div>
                   <button
                     onClick={() => removeBackgroundImage && removeBackgroundImage()}
-                    className="text-red-500 text-sm font-medium flex items-center"
+                    className="text-red-500 text-sm font-medium flex items-center cursor-pointer"
                     type="button"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -153,9 +140,9 @@ function Step1({
                         {isUploading ? "Chargement..." : "Choisir une image"}
                       </span>
                     </div>
-                    <input 
-                      type="file" 
-                      className="hidden" 
+                    <input
+                      type="file"
+                      className="hidden"
                       accept="image/*"
                       onChange={(e) => {
                         setIsUploading(true);
@@ -170,34 +157,34 @@ function Step1({
               )}
             </div>
           </div>
-          
+
           <div>
             <h3 className="font-medium mb-2">Thème de couleur</h3>
-            
+
             {/* Filtres par groupe de couleur */}
             <div className="flex flex-wrap gap-2 mb-4">
-              <button 
-                className={`px-3 py-1 text-sm rounded-full ${selectedColorGroup === null ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-700'}`}
+              <button
+                className={`px-3 py-1 text-sm rounded-full cursor-pointer ${selectedColorGroup === null ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-700'}`}
                 onClick={() => setSelectedColorGroup(null)}
               >
                 Toutes
               </button>
               {Object.keys(colorGroups).map(group => (
-                <button 
+                <button
                   key={group}
-                  className={`px-3 py-1 text-sm rounded-full ${selectedColorGroup === group ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-700'}`}
+                  className={`px-3 py-1 text-sm rounded-full cursor-pointer ${selectedColorGroup === group ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-700'}`}
                   onClick={() => setSelectedColorGroup(group as ColorGroupName)}
                 >
                   {group}
                 </button>
               ))}
             </div>
-            
+
             {/* Grille de couleurs */}
             <div className="flex flex-wrap gap-3 mb-2 relative text-center">
               {colorsToDisplay.map(color => (
                 <div key={color} className="relative w-[clamp(2.4rem,12%,100%)] flex flex-col items-center">
-                  <button 
+                  <button
                     className={`w-full h-auto aspect-square rounded-full border-2 cursor-pointer ${getColorClasses(color)} ${formData.theme === color ? 'ring-2 ring-offset-2 ring-gray-900' : ''}`}
                     aria-label={`Thème ${getColorName(color)}`}
                     onClick={() => updateFormField('theme', color)}

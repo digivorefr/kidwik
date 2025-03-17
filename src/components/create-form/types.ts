@@ -1,4 +1,4 @@
-import { CalendarFormData, Activity } from '@/app/create/types'
+import { CalendarFormData, Activity, PreviewMode } from '@/app/create/types'
 import { getThemeClasses } from '@/components/calendar/types'
 
 // Define ThemeClasses type based on the return type of getThemeClasses
@@ -33,4 +33,5 @@ export interface PreviewSectionProps {
   childPhoto: string | null;
   themeClasses: ThemeClasses;
   weekDays: string[];
+  onPreviewModeChange?: (mode: PreviewMode) => void;
 }

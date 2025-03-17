@@ -1,10 +1,11 @@
-'use client'
+'use client';
+
 import { useState } from 'react'
 import { FadeIn } from '@/components/ui/motion'
 import { Step3Props } from './types'
 import html2pdf from '@digivorefr/html2pdf.js'
 
-function Step3({ handleSave, onPrevStep }: Step3Props) {
+function Step3({ handleSave }: Step3Props) {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
@@ -104,16 +105,7 @@ function Step3({ handleSave, onPrevStep }: Step3Props) {
     <FadeIn>
       <div className="bg-white p-6 rounded-lg shadow-md">
         <div className="flex flex-col space-y-4">
-          <div>
-            <button
-              onClick={onPrevStep}
-              disabled={isGeneratingPDF}
-              className="px-4 py-1.5 rounded-full text-sm border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium disabled:opacity-70 disabled:cursor-not-allowed mb-4"
-            >
-              Retour
-            </button>
-          </div>
-          
+
           <h2 className="text-xl font-semibold">Votre calendrier est prêt à être téléchargé !</h2>
 
           <p className="mb-2">
@@ -134,7 +126,7 @@ function Step3({ handleSave, onPrevStep }: Step3Props) {
             <button
               onClick={generatePDF}
               disabled={isGeneratingPDF}
-              className="btn-primary px-6 py-3 rounded-full text-sm font-medium flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+              className="btn-primary px-6 py-3 rounded-full text-sm font-medium flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
             >
               {isGeneratingPDF ? (
                 <>
@@ -155,7 +147,7 @@ function Step3({ handleSave, onPrevStep }: Step3Props) {
             <button
               onClick={handleSave}
               disabled={isGeneratingPDF}
-              className="px-6 py-3 rounded-full text-sm border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+              className="px-6 py-3 rounded-full text-sm border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
             >
               <span className="mr-2">💾</span>
               Sauvegarder mon calendrier

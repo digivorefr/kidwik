@@ -11,13 +11,13 @@ declare module 'html2pdf.js' {
       scale?: number;
       useCORS?: boolean;
       logging?: boolean;
-      [key: string]: any;
+      [key: string]: unknown;
     };
     jsPDF?: {
       orientation?: 'portrait' | 'landscape';
       unit?: 'pt' | 'mm' | 'cm' | 'in';
       format?: string | [number, number];
-      [key: string]: any;
+      [key: string]: unknown;
     };
   }
 
@@ -25,10 +25,10 @@ declare module 'html2pdf.js' {
     from(element: HTMLElement | string): Html2PdfInstance;
     set(options: Html2PdfOptions): Html2PdfInstance;
     save(): Promise<void>;
-    toPdf(): any;
-    toImg(): any;
+    toPdf(): unknown;
+    toImg(): unknown;
     toCanvas(): Promise<HTMLCanvasElement>;
-    output(type: string, options?: any): any;
+    output(type: string, options?: unknown): unknown;
   }
 
   function html2pdf(): Html2PdfInstance;

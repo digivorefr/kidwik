@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { SavedCalendarMeta } from '@/types/saved-calendar';
 import useCalendarStore from '@/lib/store/calendar-store';
+import Image from 'next/image';
 
 interface SavedCalendarCardProps {
   calendar: SavedCalendarMeta;
@@ -12,7 +13,7 @@ interface SavedCalendarCardProps {
 export default function SavedCalendarCard({ calendar }: SavedCalendarCardProps) {
   const { deleteCalendar } = useCalendarStore();
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   // Formatage de la date en français
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -24,41 +25,42 @@ export default function SavedCalendarCard({ calendar }: SavedCalendarCardProps) 
       minute: '2-digit'
     }).format(date);
   };
-  
+
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (confirm(`Êtes-vous sûr de vouloir supprimer le calendrier "${calendar.name}" ?`)) {
       setIsDeleting(true);
       await deleteCalendar(calendar.id);
       setIsDeleting(false);
     }
   };
-  
+
   return (
     <div className="relative group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
       <Link
         href={`/create?id=${calendar.id}`}
         className="block h-full"
       >
-        <div className="aspect-video bg-gray-100 relative">
+        <div className="aspect-[297/210] bg-gray-100 relative">
           {calendar.previewImage ? (
-            <img 
-              src={calendar.previewImage} 
-              alt={calendar.name} 
-              className="w-full h-full object-cover"
+            <Image
+              src={calendar.previewImage}
+              alt={calendar.name}
+              className="object-cover"
+              fill
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-[var(--kiwi-light)]">
               <span className="text-[var(--kiwi-dark)] font-medium">Calendrier</span>
             </div>
           )}
-          
+
           <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="absolute top-2 right-2 bg-white bg-opacity-75 hover:bg-opacity-100 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            className="absolute top-2 right-2 bg-white bg-opacity-75 hover:bg-opacity-100 rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
             aria-label="Supprimer le calendrier"
           >
             {isDeleting ? (
@@ -73,7 +75,7 @@ export default function SavedCalendarCard({ calendar }: SavedCalendarCardProps) 
             )}
           </button>
         </div>
-        
+
         <div className="p-4">
           <h3 className="text-lg font-semibold text-[var(--kiwi-darker)] mb-1 truncate">
             {calendar.name}

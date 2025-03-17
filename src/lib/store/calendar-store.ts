@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import { SavedCalendar, SavedCalendarMeta, SavedCalendarsList } from '@/types/saved-calendar';
 import CalendarStorage from '@/lib/storage/calendar-storage';
 import { CalendarFormData, DEFAULT_FORM_DATA } from '@/app/create/types';
@@ -10,7 +10,7 @@ interface CalendarState {
   currentCalendarId: string | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   initializeStore: () => Promise<void>;
   loadCalendarsList: () => Promise<SavedCalendarsList>;
@@ -32,11 +32,11 @@ interface CalendarState {
 async function createPreviewImage(element: HTMLElement): Promise<string> {
   try {
     const canvas = await html2canvas(element, {
-      scale: 0.25, // Échelle réduite pour la miniature
+      scale: 480 / element.clientWidth, // Échelle réduite pour la miniature
       useCORS: true,
       backgroundColor: '#ffffff',
     });
-    return canvas.toDataURL('image/jpeg', 0.7);
+    return canvas.toDataURL('image/jpeg', 0.78);
   } catch (error) {
     console.error("Erreur lors de la création de la prévisualisation:", error);
     return '';
@@ -51,7 +51,7 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
   currentCalendarId: null,
   isLoading: false,
   error: null,
-  
+
   initializeStore: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -63,7 +63,7 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       console.error("Erreur lors de l'initialisation du stockage:", error);
     }
   },
-  
+
   loadCalendarsList: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -76,21 +76,21 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       return [];
     }
   },
-  
+
   createNewCalendar: async (name: string) => {
     set({ isLoading: true, error: null });
     try {
       // Créer avec les valeurs par défaut
       const meta = await CalendarStorage.createCalendar(name, DEFAULT_FORM_DATA, null);
-      
+
       // Mettre à jour la liste
       const updatedList = [...get().calendarsList, meta];
-      set({ 
+      set({
         calendarsList: updatedList,
         currentCalendarId: meta.id,
         isLoading: false
       });
-      
+
       return meta;
     } catch (error) {
       set({ error: "Erreur lors de la création du calendrier", isLoading: false });
@@ -98,7 +98,7 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       throw error;
     }
   },
-  
+
   loadCalendar: async (id: string) => {
     set({ isLoading: true, error: null });
     try {
@@ -116,7 +116,7 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       return null;
     }
   },
-  
+
   saveCurrentCalendar: async (id, formData, childPhoto, previewElement) => {
     set({ isLoading: true, error: null });
     try {
@@ -125,20 +125,20 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       if (previewElement) {
         previewImage = await createPreviewImage(previewElement);
       }
-      
+
       // Mettre à jour le calendrier
       const meta = await CalendarStorage.updateCalendar(id, {
         formData,
         childPhoto,
         previewImage
       });
-      
+
       if (meta) {
         // Mettre à jour la liste locale
-        const updatedList = get().calendarsList.map(item => 
+        const updatedList = get().calendarsList.map(item =>
           item.id === id ? meta : item
         );
-        
+
         set({ calendarsList: updatedList, isLoading: false });
         return meta;
       } else {
@@ -151,21 +151,21 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       return null;
     }
   },
-  
+
   deleteCalendar: async (id: string) => {
     set({ isLoading: true, error: null });
     try {
       const success = await CalendarStorage.deleteCalendar(id);
-      
+
       if (success) {
         // Mettre à jour la liste locale
         const updatedList = get().calendarsList.filter(item => item.id !== id);
-        
+
         // Réinitialiser l'ID courant si c'est celui qui est supprimé
         if (get().currentCalendarId === id) {
           set({ currentCalendarId: null });
         }
-        
+
         set({ calendarsList: updatedList, isLoading: false });
         return true;
       } else {
@@ -178,7 +178,7 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       return false;
     }
   },
-  
+
   setCurrentCalendarId: (id: string | null) => {
     set({ currentCalendarId: id });
   }
