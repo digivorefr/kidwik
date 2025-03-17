@@ -17,7 +17,7 @@ export default function NewCalendarPage() {
     setError('');
     
     if (!calendarName.trim()) {
-      setError('Veuillez donner un nom à votre calendrier');
+      setError("Veuillez donner un nom à votre calendrier");
       return;
     }
     
@@ -26,7 +26,7 @@ export default function NewCalendarPage() {
       // Redirection vers l'éditeur avec l'ID du nouveau calendrier
       router.push(`/create?id=${meta.id}`);
     } catch (err) {
-      setError('Une erreur est survenue lors de la création du calendrier');
+      setError("Une erreur est survenue lors de la création du calendrier");
       console.error(err);
     }
   };

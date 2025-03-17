@@ -38,7 +38,7 @@ async function createPreviewImage(element: HTMLElement): Promise<string> {
     });
     return canvas.toDataURL('image/jpeg', 0.7);
   } catch (error) {
-    console.error('Erreur lors de la création de la prévisualisation:', error);
+    console.error("Erreur lors de la création de la prévisualisation:", error);
     return '';
   }
 }
@@ -59,8 +59,8 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       const list = await CalendarStorage.getCalendarsList();
       set({ calendarsList: list, isLoading: false });
     } catch (error) {
-      set({ error: 'Erreur lors de l'initialisation du stockage', isLoading: false });
-      console.error('Erreur lors de l'initialisation du stockage:', error);
+      set({ error: "Erreur lors de l'initialisation du stockage", isLoading: false });
+      console.error("Erreur lors de l'initialisation du stockage:", error);
     }
   },
   
@@ -71,8 +71,8 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       set({ calendarsList: list, isLoading: false });
       return list;
     } catch (error) {
-      set({ error: 'Erreur lors du chargement des calendriers', isLoading: false });
-      console.error('Erreur lors du chargement des calendriers:', error);
+      set({ error: "Erreur lors du chargement des calendriers", isLoading: false });
+      console.error("Erreur lors du chargement des calendriers:", error);
       return [];
     }
   },
@@ -93,8 +93,8 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       
       return meta;
     } catch (error) {
-      set({ error: 'Erreur lors de la création du calendrier', isLoading: false });
-      console.error('Erreur lors de la création du calendrier:', error);
+      set({ error: "Erreur lors de la création du calendrier", isLoading: false });
+      console.error("Erreur lors de la création du calendrier:", error);
       throw error;
     }
   },
@@ -107,12 +107,12 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
         set({ currentCalendarId: id, isLoading: false });
         return calendar;
       } else {
-        set({ error: 'Calendrier non trouvé', isLoading: false });
+        set({ error: "Calendrier non trouvé", isLoading: false });
         return null;
       }
     } catch (error) {
-      set({ error: 'Erreur lors du chargement du calendrier', isLoading: false });
-      console.error('Erreur lors du chargement du calendrier:', error);
+      set({ error: "Erreur lors du chargement du calendrier", isLoading: false });
+      console.error("Erreur lors du chargement du calendrier:", error);
       return null;
     }
   },
@@ -142,12 +142,12 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
         set({ calendarsList: updatedList, isLoading: false });
         return meta;
       } else {
-        set({ error: 'Calendrier non trouvé lors de la sauvegarde', isLoading: false });
+        set({ error: "Calendrier non trouvé lors de la sauvegarde", isLoading: false });
         return null;
       }
     } catch (error) {
-      set({ error: 'Erreur lors de la sauvegarde du calendrier', isLoading: false });
-      console.error('Erreur lors de la sauvegarde du calendrier:', error);
+      set({ error: "Erreur lors de la sauvegarde du calendrier", isLoading: false });
+      console.error("Erreur lors de la sauvegarde du calendrier:", error);
       return null;
     }
   },
@@ -169,12 +169,12 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
         set({ calendarsList: updatedList, isLoading: false });
         return true;
       } else {
-        set({ error: 'Erreur lors de la suppression du calendrier', isLoading: false });
+        set({ error: "Erreur lors de la suppression du calendrier", isLoading: false });
         return false;
       }
     } catch (error) {
-      set({ error: 'Erreur lors de la suppression du calendrier', isLoading: false });
-      console.error('Erreur lors de la suppression du calendrier:', error);
+      set({ error: "Erreur lors de la suppression du calendrier", isLoading: false });
+      console.error("Erreur lors de la suppression du calendrier:", error);
       return false;
     }
   },

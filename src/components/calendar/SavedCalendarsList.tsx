@@ -7,7 +7,7 @@ import useCalendarStore from '@/lib/store/calendar-store';
 import Link from 'next/link';
 
 export default function SavedCalendarsList() {
-  const { calendarsList, loadCalendarsList, isLoading } = useCalendarStore();
+  const { calendarsList, loadCalendarsList } = useCalendarStore();
   const [initialized, setInitialized] = useState(false);
   
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function SavedCalendarsList() {
       <FadeIn>
         <div className="text-center py-12">
           <h3 className="text-xl font-medium text-gray-600 mb-4">
-            Vous n'avez pas encore de calendriers sauvegardés
+            Vous n&apos;avez pas encore de calendriers sauvegardés
           </h3>
           <p className="text-gray-500 mb-6">
             Créez votre premier calendrier pour le retrouver ici.
