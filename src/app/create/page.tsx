@@ -325,7 +325,7 @@ function CreateCalendarContent() {
   // Afficher un écran de chargement
   if (isLoading) {
     return (
-      <main className="flex-grow container mx-auto p-8 flex items-center justify-center">
+      <main className="flex-grow container mx-auto py-8 flex items-center justify-center">
         <div className="text-center">
           <svg className="animate-spin h-12 w-12 text-[var(--kiwi-dark)] mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -340,7 +340,7 @@ function CreateCalendarContent() {
   return (
     <>
       {/* Main content */}
-      <main className="flex-grow container mx-auto p-8">
+      <main className="flex-grow container mx-auto py-8">
         <FadeIn>
           <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>

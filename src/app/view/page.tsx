@@ -34,7 +34,7 @@ export default function CalendarsView() {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-8">
+    <div className="container mx-auto py-4 md:py-8">
       <FadeIn>
         {calendarId ? (
           // Vue détaillée d'un calendrier

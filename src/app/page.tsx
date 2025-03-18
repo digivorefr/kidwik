@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       {/* Main content */}
-      <main className="flex-grow container mx-auto p-8 flex flex-col md:flex-row items-center gap-12">
+      <main className="flex-grow container mx-auto py-8 min-h-[50dvh] flex flex-col md:flex-row items-center gap-12">
         {/* Left side: Text content */}
         <div className="md:w-1/2 flex flex-col gap-6">
           <FadeIn>
@@ -50,7 +50,7 @@ export default function Home() {
       </main>
 
       {/* Features section */}
-      <section className="container mx-auto p-8 mb-12">
+      <section className="container mx-auto py-8 mb-12">
         <h2 className="text-2xl font-bold text-[var(--kiwi-darker)] mb-6 text-center">
           Fonctionnalités
         </h2>

@@ -16,9 +16,7 @@ function Header() {
       <div className="container mx-auto flex justify-between items-center">
         <Link 
           href="/" 
-          className={`text-2xl font-bold ${isActive('/') 
-            ? 'text-[var(--kiwi)]' 
-            : 'text-[var(--kiwi-darker)]'}`}
+          className={`text-2xl font-bold text-[var(--kiwi-medium)]`}
         >
           KidWik
         </Link>
@@ -28,8 +26,8 @@ function Header() {
               <Link 
                 href="/view" 
                 className={`transition-colors ${isActive('/view') 
-                  ? 'text-[var(--kiwi)] font-medium' 
-                  : 'text-[var(--kiwi-dark)] hover:text-[var(--kiwi)]'}`}
+                  ? 'text-[var(--kiwi-darker)] font-medium' 
+                  : 'text-[var(--kiwi-dark)] hover:text-[var(--kiwi-darker)]'}`}
               >
                 Mes calendriers
               </Link>
@@ -38,8 +36,8 @@ function Header() {
               <Link 
                 href="/create/new" 
                 className={`transition-colors ${isActive('/create') 
-                  ? 'text-[var(--kiwi)] font-medium' 
-                  : 'text-[var(--kiwi-dark)] hover:text-[var(--kiwi)]'}`}
+                  ? 'text-[var(--kiwi-darker)] font-medium' 
+                  : 'text-[var(--kiwi-dark)] hover:text-[var(--kiwi-darker)]'}`}
               >
                 Créer un calendrier
               </Link>
