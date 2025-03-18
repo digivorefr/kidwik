@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import useCalendarStore from '@/lib/store/calendar-store';
@@ -36,7 +36,7 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCalendar = async () => {
+  const fetchCalendar = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await loadCalendar(calendarId);
@@ -50,11 +50,11 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [calendarId, loadCalendar]);
 
   useEffect(() => {
     fetchCalendar();
-  }, [calendarId, loadCalendar]);
+  }, [fetchCalendar]);
 
   const handleDelete = async () => {
     if (!calendar) return;
