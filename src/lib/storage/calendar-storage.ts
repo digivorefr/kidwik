@@ -131,6 +131,63 @@ export const CalendarStorage = {
     await localforage.setItem(CALENDARS_META_KEY, updatedList);
     
     return true;
+  },
+
+  /**
+   * Exporte un calendrier sous forme de chaîne JSON
+   */
+  async exportCalendar(id: string): Promise<string | null> {
+    const calendar = await this.getCalendar(id);
+    if (!calendar) return null;
+    
+    // Convertir en JSON pour l'export
+    return JSON.stringify(calendar);
+  },
+
+  /**
+   * Importe un calendrier à partir d'une chaîne JSON
+   */
+  async importCalendar(jsonString: string): Promise<SavedCalendarMeta | null> {
+    try {
+      // Parser les données JSON
+      const importedData = JSON.parse(jsonString) as SavedCalendar;
+      
+      // Valider les données importées
+      if (!importedData.meta || !importedData.formData) {
+        throw new Error("Format de données invalide");
+      }
+      
+      // Générer un nouvel ID pour éviter les conflits
+      const now = new Date().toISOString();
+      const id = uuidv4();
+      
+      const meta: SavedCalendarMeta = {
+        ...importedData.meta,
+        id, // Nouvel ID
+        name: `${importedData.meta.name} (Importé)`,
+        createdAt: now,
+        updatedAt: now
+      };
+      
+      const calendarData: SavedCalendar = {
+        meta,
+        formData: importedData.formData,
+        childPhoto: importedData.childPhoto
+      };
+      
+      // Sauvegarder les données du calendrier
+      await localforage.setItem(`${CALENDAR_DATA_PREFIX}${id}`, calendarData);
+      
+      // Mettre à jour la liste des métadonnées
+      const list = await this.getCalendarsList();
+      list.push(meta);
+      await localforage.setItem(CALENDARS_META_KEY, list);
+      
+      return meta;
+    } catch (error) {
+      console.error("Erreur lors de l'importation du calendrier:", error);
+      return null;
+    }
   }
 };
 

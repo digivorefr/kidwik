@@ -20,10 +20,13 @@ interface CalendarState {
     id: string,
     formData: CalendarFormData,
     childPhoto: string | null,
-    previewElement?: HTMLElement
+    previewElement?: HTMLElement,
+    name?: string
   ) => Promise<SavedCalendarMeta | null>;
   deleteCalendar: (id: string) => Promise<boolean>;
   setCurrentCalendarId: (id: string | null) => void;
+  exportCalendar: (id: string) => Promise<string | null>;
+  importCalendar: (jsonString: string) => Promise<SavedCalendarMeta | null>;
 }
 
 /**
@@ -117,7 +120,7 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
     }
   },
 
-  saveCurrentCalendar: async (id, formData, childPhoto, previewElement) => {
+  saveCurrentCalendar: async (id, formData, childPhoto, previewElement, name) => {
     set({ isLoading: true, error: null });
     try {
       // Générer une prévisualisation si un élément est fourni
@@ -128,6 +131,7 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
 
       // Mettre à jour le calendrier
       const meta = await CalendarStorage.updateCalendar(id, {
+        name,
         formData,
         childPhoto,
         previewImage
@@ -181,6 +185,43 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
 
   setCurrentCalendarId: (id: string | null) => {
     set({ currentCalendarId: id });
+  },
+
+  exportCalendar: async (id: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const exportedData = await CalendarStorage.exportCalendar(id);
+      set({ isLoading: false });
+      return exportedData;
+    } catch (error) {
+      set({ error: "Erreur lors de l'exportation du calendrier", isLoading: false });
+      console.error("Erreur lors de l'exportation du calendrier:", error);
+      return null;
+    }
+  },
+
+  importCalendar: async (jsonString: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const importedCalendar = await CalendarStorage.importCalendar(jsonString);
+      
+      if (importedCalendar) {
+        // Mettre à jour la liste locale avec le calendrier importé
+        const updatedList = [...get().calendarsList, importedCalendar];
+        set({
+          calendarsList: updatedList,
+          isLoading: false
+        });
+        return importedCalendar;
+      } else {
+        set({ error: "Format de calendrier invalide", isLoading: false });
+        return null;
+      }
+    } catch (error) {
+      set({ error: "Erreur lors de l'importation du calendrier", isLoading: false });
+      console.error("Erreur lors de l'importation du calendrier:", error);
+      return null;
+    }
   }
 }));
 

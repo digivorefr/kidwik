@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { FadeIn, ScaleIn } from '@/components/ui/motion'
-import SavedCalendarsList from '@/components/calendar/SavedCalendarsList'
 
 export default function Home() {
   return (
@@ -31,10 +30,10 @@ export default function Home() {
                 Créer mon calendrier
               </Link>
               <Link 
-                href="/examples" 
+                href="/view" 
                 className="px-6 py-3 rounded-lg text-center border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium"
               >
-                Voir des exemples
+                Mes calendriers
               </Link>
             </div>
           </FadeIn>
@@ -50,10 +49,37 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Saved calendars section (conditionally rendered) */}
-      <section id="saved-calendars" className="container mx-auto p-8 mb-12">
-        <h2 className="text-2xl font-bold text-[var(--kiwi-darker)] mb-6">Mes calendriers sauvegardés</h2>
-        <SavedCalendarsList />
+      {/* Features section */}
+      <section className="container mx-auto p-8 mb-12">
+        <h2 className="text-2xl font-bold text-[var(--kiwi-darker)] mb-6 text-center">
+          Fonctionnalités
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-2 text-[var(--kiwi-darker)]">Personnalisable</h3>
+            <p>Choisissez les jours, les activités et les couleurs selon vos besoins.</p>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-2 text-[var(--kiwi-darker)]">Imprimable</h3>
+            <p>Exportez en PDF pour imprimer facilement votre calendrier et vos gommettes.</p>
+          </div>
+          
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-2 text-[var(--kiwi-darker)]">Sauvegardable</h3>
+            <p>Enregistrez vos calendriers localement et importez/exportez-les facilement.</p>
+          </div>
+        </div>
+        
+        <div className="mt-8 text-center">
+          <Link 
+            href="/create/new" 
+            className="btn-primary px-6 py-3 rounded-lg text-center font-medium inline-block"
+          >
+            Commencer maintenant
+          </Link>
+        </div>
       </section>
     </>
   )
