@@ -8,11 +8,14 @@ const CALENDARS_META_KEY = 'kidwik_calendars_meta';
 const CALENDAR_DATA_PREFIX = 'kidwik_calendar_';
 
 // Configurer localforage
-localforage.config({
-  name: 'KidWik',
-  storeName: 'calendar_storage',
-  description: 'Stockage des calendriers KidWik'
-});
+export const initializeStorage = async () => {
+  return localforage.config({
+    driver: [localforage.INDEXEDDB, localforage.LOCALSTORAGE],
+    name: 'kidwik',
+    version: 1.0,
+    description: 'Stockage des calendriers kidwik'
+  });
+};
 
 /**
  * Service pour gérer le stockage des calendriers

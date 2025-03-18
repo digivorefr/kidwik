@@ -5,7 +5,7 @@ function Footer() {
     <footer className="bg-white shadow-2xl text-gray-500 p-6">
       <div className="container mx-auto">
         <div className="mb-2">
-          <p>© {new Date().getFullYear()} KidWik - Tous droits réservés</p>
+          <p>© {new Date().getFullYear()} kidwik - Tous droits réservés</p>
         </div>
         
         <div className="flex gap-4 mt-2 text-sm">

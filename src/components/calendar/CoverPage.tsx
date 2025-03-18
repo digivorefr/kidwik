@@ -83,7 +83,7 @@ function CoverPage({ themeClasses }: CoverPageProps) {
       </div>
       
       <div className="mt-6 text-center text-sm text-gray-500">
-        Bon planning avec KidWik !
+        Bon planning avec kidwik !
       </div>
     </div>
   );

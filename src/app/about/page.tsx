@@ -7,7 +7,7 @@ export default function AboutPage() {
     <main className="container mx-auto px-4 py-12 max-w-3xl">
       <FadeIn>
         <h1 className="text-4xl font-bold text-[var(--kiwi-darker)] mb-8 text-center">
-          À propos de KidWik
+          À propos de kidwik
         </h1>
 
         <div className="bg-white rounded-xl shadow-md p-8 space-y-8">
@@ -16,7 +16,7 @@ export default function AboutPage() {
               Notre mission
             </h2>
             <p className="text-lg">
-              KidWik a été conçu pour aider les enfants à mieux se repérer dans le temps grâce à un calendrier 
+              kidwik a été conçu pour aider les enfants à mieux se repérer dans le temps grâce à un calendrier 
               visuel personnalisable et des gommettes représentant différentes activités quotidiennes.
             </p>
           </section>
@@ -37,7 +37,7 @@ export default function AboutPage() {
               Open Source
             </h2>
             <p className="text-lg">
-              Le code de KidWik est entièrement open source, publié sous licence MIT, et disponible sur GitHub.
+              Le code de kidwik est entièrement open source, publié sous licence MIT, et disponible sur GitHub.
               Cela signifie que vous pouvez consulter, modifier et contribuer au code librement.
             </p>
             <div className="mt-4">
@@ -60,7 +60,7 @@ export default function AboutPage() {
               Confidentialité
             </h2>
             <p className="text-lg">
-              Nous respectons entièrement votre vie privée. KidWik n&apos;effectue aucun tracking et ne synchronise 
+              Nous respectons entièrement votre vie privée. kidwik n&apos;effectue aucun tracking et ne synchronise 
               aucune donnée avec un serveur externe. Toutes les données que vous créez (calendriers, 
               préférences, etc.) restent exclusivement stockées sur votre appareil et ne sont jamais exploitées.
             </p>

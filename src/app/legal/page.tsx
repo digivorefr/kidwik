@@ -16,7 +16,7 @@ export default function LegalPage() {
               1. Éditeur du site
             </h2>
             <p className="text-lg">
-              Le site KidWik est édité par :
+              Le site kidwik est édité par :
             </p>
             <div className="pl-4 border-l-4 border-[var(--kiwi-light)] py-2">
               <p><strong>Digivore</strong></p>
@@ -47,11 +47,11 @@ export default function LegalPage() {
               3. Propriété intellectuelle
             </h2>
             <p className="text-lg">
-              L&apos;ensemble du contenu du site KidWik (interface, code, textes, images, logos) est la propriété 
+              L&apos;ensemble du contenu du site kidwik (interface, code, textes, images, logos) est la propriété 
               exclusive de Digivore, à l&apos;exception des éléments fournis par des tiers.
             </p>
             <p className="text-lg">
-              Le code source de KidWik est publié sous licence MIT, ce qui permet sa réutilisation 
+              Le code source de kidwik est publié sous licence MIT, ce qui permet sa réutilisation 
               sous certaines conditions détaillées dans le fichier de licence disponible sur notre 
               dépôt GitHub.
             </p>
@@ -72,7 +72,7 @@ export default function LegalPage() {
               4. Données personnelles et confidentialité
             </h2>
             <p className="text-lg">
-              KidWik est conçu dans le respect de votre vie privée.
+              kidwik est conçu dans le respect de votre vie privée.
             </p>
             <p className="text-lg">
               L&apos;application n&apos;effectue aucune collecte de données personnelles. Toutes les données 
