@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { FadeIn } from '@/components/ui/motion';
 import EmailProtection from '@/components/ui/EmailProtection';
 

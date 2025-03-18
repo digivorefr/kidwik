@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FadeIn } from '@/components/ui/motion';
@@ -9,7 +9,7 @@ import CalendarsList from '@/components/calendar/CalendarsList';
 import CalendarDetail from '@/components/calendar/CalendarDetail';
 import ImportCalendarModal from '@/components/calendar/ImportCalendarModal';
 
-export default function CalendarsView() {
+function CalendarsViewContent() {
   const searchParams = useSearchParams();
   const calendarId = searchParams.get('id');
   const { loadCalendarsList, calendarsList } = useCalendarStore();
@@ -74,5 +74,17 @@ export default function CalendarsView() {
         )}
       </FadeIn>
     </div>
+  );
+}
+
+export default function CalendarsView() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[var(--kiwi-dark)]"></div>
+      </div>
+    }>
+      <CalendarsViewContent />
+    </Suspense>
   );
 }
