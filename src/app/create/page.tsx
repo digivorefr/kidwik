@@ -9,6 +9,7 @@ import {
   Activity,
   PreviewMode
 } from './types'
+import { ProcessedImageEvent } from '@/components/create-form/types'
 
 // Import the extracted components
 import { getThemeClasses } from '@/components/calendar/types'
@@ -199,38 +200,41 @@ function CreateCalendarContent() {
     updateFormField('stickerQuantities', updatedQuantities)
   }
 
-  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement> | { target: { files: [string] } }) => {
-    // Handle case where we're passed a processed image directly as a string
-    if (typeof e.target.files?.[0] === 'string') {
-      const processedImageUrl = e.target.files[0];
-      setChildPhoto(processedImageUrl);
-
-      // Set default quantity for child photo
-      updateFormField('stickerQuantities', {
-        ...formData.stickerQuantities,
-        childPhoto: 1
-      });
-      return;
-    }
-
-    // Handle normal file upload case
-    const file = e.target.files?.[0] as File;
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setChildPhoto(event.target.result as string);
+  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement> | ProcessedImageEvent) => {
+    // If we received a processed image event
+    if ('files' in e.target && Array.isArray(e.target.files) && e.target.files.length > 0) {
+      const processedImageUrl = e.target.files[0]
+      if (typeof processedImageUrl === 'string') {
+        setChildPhoto(processedImageUrl)
 
         // Set default quantity for child photo
         updateFormField('stickerQuantities', {
           ...formData.stickerQuantities,
           childPhoto: 1
-        });
+        })
+        return
       }
-    };
-    reader.readAsDataURL(file);
-  };
+    }
+
+    // Handle standard file upload case - we know it's a ChangeEvent<HTMLInputElement> at this point
+    const fileInput = e as ChangeEvent<HTMLInputElement>
+    const file = fileInput.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setChildPhoto(event.target.result as string)
+
+        // Set default quantity for child photo
+        updateFormField('stickerQuantities', {
+          ...formData.stickerQuantities,
+          childPhoto: 1
+        })
+      }
+    }
+    reader.readAsDataURL(file)
+  }
 
   const handleBackgroundImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

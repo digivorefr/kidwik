@@ -8,6 +8,13 @@ import Image from 'next/image'
 import { Button, IconButton } from '@/components/ui/Button'
 import useImageUpload from '@/lib/hooks/useImageUpload'
 
+// Type for our synthetic event with processed image
+interface ProcessedImageEvent {
+  target: {
+    files: [string] // Array with exactly one string (the processed image URL)
+  }
+}
+
 function Step2({
   formData,
   childPhoto,
@@ -65,7 +72,7 @@ function Step2({
         target: {
           files: [processedImageUrl]
         }
-      } as any)
+      } as ProcessedImageEvent)
     }
   }, [childPhotoUpload, handlePhotoUpload])
 
