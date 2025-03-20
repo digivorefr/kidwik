@@ -31,9 +31,6 @@ export const CalendarStorage = {
       if (!exists) {
         // Créer une liste vide
         await localforage.setItem<SavedCalendarsList>(CALENDARS_META_KEY, []);
-        console.log("Stockage de calendriers initialisé avec une liste vide");
-      } else {
-        console.log(`Stockage déjà initialisé avec ${exists.length} calendriers`);
       }
     } catch (error) {
       console.error("Erreur lors de l'initialisation du stockage:", error);
@@ -54,11 +51,9 @@ export const CalendarStorage = {
       const list = await localforage.getItem<SavedCalendarsList>(CALENDARS_META_KEY);
 
       if (!list) {
-        console.log("Liste de calendriers vide ou invalide, retour d'une liste vide");
         return [];
       }
 
-      console.log(`Liste de calendriers récupérée (${list.length} calendriers)`);
       return list;
     } catch (error) {
       console.error("Erreur lors de la récupération de la liste des calendriers:", error);
@@ -549,7 +544,6 @@ export const CalendarStorage = {
         // Supprimer ces calendriers
         for (const calendar of toDelete) {
           await localforage.removeItem(`${CALENDAR_DATA_PREFIX}${calendar.id}`);
-          console.log(`Ancien calendrier supprimé pour libérer de l'espace: ${calendar.name}`);
         }
 
         // Mettre à jour la liste des métadonnées

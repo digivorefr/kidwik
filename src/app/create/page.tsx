@@ -71,7 +71,6 @@ function CreateCalendarContent() {
         // Charger le calendrier existant avec l'ID fourni
         const calendar = await loadCalendar(calendarId)
         if (calendar) {
-          console.log(`Calendrier chargé: ${calendarId}`, calendar.meta.name)
           setFormData(calendar.formData)
           setChildPhoto(calendar.childPhoto)
           setCalendarName(calendar.meta.name)
@@ -106,9 +105,7 @@ function CreateCalendarContent() {
 
         const result = await saveCurrentCalendar(calendarId, formData, childPhoto, previewElement, calendarName);
 
-        if (result) {
-          console.log(`Sauvegarde automatique réussie pour le calendrier: ${calendarId}`);
-        } else {
+        if (!result) {
           console.error(`Échec de la sauvegarde automatique pour le calendrier: ${calendarId}`);
         }
       } catch (err) {
@@ -266,8 +263,6 @@ function CreateCalendarContent() {
       const result = await saveCurrentCalendar(calendarId, formData, childPhoto, previewElement, calendarName);
 
       if (result) {
-        console.log("Sauvegarde explicite réussie avant navigation vers:", destination);
-
         // Attendre un court instant pour assurer la synchronisation du stockage
         await new Promise(resolve => setTimeout(resolve, 300));
 

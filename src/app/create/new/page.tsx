@@ -30,8 +30,6 @@ export default function NewCalendarPage() {
       // Créer un nouveau calendrier et obtenir les métadonnées
       const newCalendarMeta = await createNewCalendar(calendarName);
 
-      console.log("Nouveau calendrier créé:", newCalendarMeta.id, newCalendarMeta.name);
-
       // Rediriger vers la page de création avec l'ID du calendrier nouvellement créé
       router.push(`/create?id=${newCalendarMeta.id}`);
     } catch (err) {

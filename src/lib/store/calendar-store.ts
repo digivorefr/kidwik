@@ -76,8 +76,6 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       // Now explicitly reload the calendars list from storage
       const list = await CalendarStorage.getCalendarsList();
 
-      console.log("Loaded calendars list:", list.length, "calendars");
-
       set({ calendarsList: list, isLoading: false });
       return list;
     } catch (error) {
@@ -93,12 +91,8 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       // S'assurer que le storage est initialisé
       await CalendarStorage.init();
 
-      console.log(`Création d'un nouveau calendrier: ${name}`);
-
       // Créer avec les valeurs par défaut
       const meta = await CalendarStorage.createCalendar(name, DEFAULT_FORM_DATA, null);
-
-      console.log(`Calendrier créé avec succès: ${meta.id}, ${meta.name}`);
 
       // Mettre à jour la liste
       const freshList = await CalendarStorage.getCalendarsList();
@@ -151,7 +145,6 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
       let meta: SavedCalendarMeta | null = null;
 
       if (existingCalendar) {
-        console.log(`Mise à jour du calendrier existant: ${id}`);
         // Mettre à jour le calendrier existant
         meta = await CalendarStorage.updateCalendar(id, {
           name,
@@ -160,7 +153,6 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
           previewImage
         });
       } else {
-        console.log(`Création d'un nouveau calendrier avec ID spécifique: ${id}`);
         // Créer un nouveau calendrier avec l'ID spécifié
         const calendarName = name || 'Mon calendrier';
         meta = await CalendarStorage.createCalendar(
@@ -184,7 +176,6 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
           ? freshList.map(item => item.id === id ? meta : item)
           : [...freshList, meta];
 
-        console.log(`Calendrier sauvegardé: ${id}, ${meta.name} (${updatedList.length} calendriers total)`);
 
         set({ calendarsList: updatedList, isLoading: false });
         return meta;
