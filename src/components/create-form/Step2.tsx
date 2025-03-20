@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { FadeIn } from '@/components/ui/motion'
 import { Step2Props } from './types'
 import StickerPreview from '@/components/calendar/StickerPreview'
@@ -6,6 +6,7 @@ import ImageStickerPreview from '@/components/calendar/ImageStickerPreview'
 import { PRESET_ACTIVITIES } from '@/app/create/types'
 import Image from 'next/image'
 import { Button, IconButton } from '@/components/ui/Button'
+import useImageUpload from '@/lib/hooks/useImageUpload'
 
 function Step2({
   formData,
@@ -20,7 +21,54 @@ function Step2({
 }: Step2Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalTab, setModalTab] = useState<'upload' | 'icons'>('upload')
-  const [customImage, setCustomImage] = useState<string | null>(null)
+
+  // Image upload hook for child photo
+  const childPhotoUpload = useImageUpload({
+    preset: 'CHILD_PHOTO',
+    onSuccess: () => {
+      // We don't need to do anything special in the success callback
+      // as we'll handle passing the processed image to the parent in the
+      // handleChildPhotoUpload function
+    },
+    onError: (error) => {
+      console.error('Error uploading child photo:', error)
+      alert(error)
+    }
+  })
+
+  // Image upload hook for custom stickers
+  const customStickerUpload = useImageUpload({
+    preset: 'STICKER',
+    onSuccess: (dataUrl) => {
+      // Store the processed image
+      addCustomImageActivity(dataUrl)
+    },
+    onError: (error) => {
+      console.error('Error uploading custom sticker:', error)
+      alert(error)
+    }
+  })
+
+  // Handler for child photo upload
+  const handleChildPhotoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // First pass the original event to the parent handler
+    handlePhotoUpload(e)
+
+    // Then process the image for optimization and analytics only
+    // We don't need to use the result since the parent already has the image
+    await childPhotoUpload.upload(file)
+  }, [childPhotoUpload, handlePhotoUpload])
+
+  // Handler for custom image upload
+  const handleCustomImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    await customStickerUpload.upload(file)
+  }, [customStickerUpload])
 
   // Helper function for quantity controls
   const renderQuantityControls = (activityId: string) => {
@@ -63,25 +111,12 @@ function Step2({
     )
   }
 
-  const handleCustomImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setCustomImage(event.target.result as string)
-      }
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const addCustomImageActivity = () => {
-    if (customImage) {
+  const addCustomImageActivity = (imageDataUrl: string) => {
+    if (imageDataUrl) {
       const newActivity = {
         id: `custom-img-${Date.now()}`,
         name: 'Personnalisé',
-        icon: customImage
+        icon: imageDataUrl
       }
 
       updateFormField('customActivities', [...formData.customActivities, newActivity])
@@ -94,7 +129,7 @@ function Step2({
       })
 
       // Reset and close
-      setCustomImage(null)
+      customStickerUpload.reset()
       setIsModalOpen(false)
     }
   }
@@ -141,7 +176,7 @@ function Step2({
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={handlePhotoUpload}
+                    onChange={handleChildPhotoUpload}
                   />
                 </label>
 
@@ -155,7 +190,21 @@ function Step2({
                 )}
               </div>
 
-              {childPhoto && renderQuantityControls('childPhoto')}
+              {childPhoto && (
+                <>
+                  {childPhotoUpload.stats && (
+                    <div className="text-xs text-gray-500 flex flex-wrap justify-between">
+                      <span>Taille: {Math.round(childPhotoUpload.stats.compressedSize / 1024)} Ko</span>
+                      <span>Dimensions: {childPhotoUpload.stats.width} × {childPhotoUpload.stats.height}</span>
+                    </div>
+                  )}
+                  {renderQuantityControls('childPhoto')}
+                </>
+              )}
+
+              {childPhotoUpload.error && (
+                <p className="text-sm text-red-500">{childPhotoUpload.error}</p>
+              )}
 
               <div className="text-sm text-gray-500">
                 Cette gommette représente votre enfant et sera déplacée chaque jour sur le calendrier. C&apos;est un élément central qui permet à votre enfant de se repérer plus facilement dans sa semaine.
@@ -279,7 +328,7 @@ function Step2({
                   <IconButton
                     onClick={() => {
                       setIsModalOpen(false)
-                      setCustomImage(null)
+                      customStickerUpload.reset()
                     }}
                     className="text-gray-500 hover:text-gray-700"
                     ariaLabel="Fermer"
@@ -308,28 +357,38 @@ function Step2({
 
                 {modalTab === 'upload' && (
                   <div className="space-y-4">
-                    {customImage ? (
+                    {customStickerUpload.image ? (
                       <div className="space-y-4">
                         <div className="flex justify-center">
                           <div className="w-32 h-32 relative border rounded-lg overflow-hidden">
                             <Image
-                              src={customImage}
+                              src={customStickerUpload.image}
                               alt="Image personnalisée"
                               className="object-cover object-center w-full h-full"
                               fill
                             />
                           </div>
                         </div>
+                        {customStickerUpload.stats && (
+                          <div className="text-xs text-gray-500 text-center">
+                            <p>Taille: {Math.round(customStickerUpload.stats.compressedSize / 1024)} Ko</p>
+                            <p>Compression: {Math.round((1 - customStickerUpload.stats.compressionRatio) * 100)}%</p>
+                          </div>
+                        )}
                         <div className="flex gap-2">
                           <Button
-                            onClick={() => setCustomImage(null)}
+                            onClick={() => customStickerUpload.reset()}
                             variant="outline"
                             className="flex-1"
                           >
                             Changer
                           </Button>
                           <Button
-                            onClick={addCustomImageActivity}
+                            onClick={() => {
+                              if (customStickerUpload.image) {
+                                addCustomImageActivity(customStickerUpload.image)
+                              }
+                            }}
                             variant="primary"
                             className="flex-1"
                           >
@@ -353,6 +412,9 @@ function Step2({
                           onChange={handleCustomImageUpload}
                         />
                       </label>
+                    )}
+                    {customStickerUpload.error && (
+                      <p className="text-sm text-red-500 mt-2">{customStickerUpload.error}</p>
                     )}
                   </div>
                 )}

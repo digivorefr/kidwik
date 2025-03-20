@@ -1,17 +1,41 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { FadeIn } from '@/components/ui/motion'
 import { FormStepProps } from './types'
 import { TailwindColor } from '@/app/create/types'
 import { Button, ChipButton, ColorButton } from '@/components/ui/Button'
+import useImageUpload from '@/lib/hooks/useImageUpload'
 
 function Step1({
   formData,
   updateFormField,
-  handleBackgroundImageUpload,
   removeBackgroundImage
 }: FormStepProps) {
   const [isUploading, setIsUploading] = useState(false)
+
+  // Image upload hook for background image with BACKGROUND preset
+  const backgroundUpload = useImageUpload({
+    preset: 'BACKGROUND',
+    onSuccess: (dataUrl) => {
+      // Call the parent's handler to update form state
+      updateFormField('backgroundImage', dataUrl)
+      setIsUploading(false)
+    },
+    onError: (error) => {
+      console.error('Error uploading background:', error)
+      setIsUploading(false)
+      alert(error)
+    }
+  })
+
+  // Handler for background image upload
+  const handleBackgroundUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    await backgroundUpload.upload(file)
+  }, [backgroundUpload])
 
   // Définir le type pour les groupes de couleurs
   type ColorGroupName = 'Rouge/Orange/Jaune' | 'Vert' | 'Bleu' | 'Violet/Rose' | 'Gris';
@@ -116,8 +140,20 @@ function Step1({
                       sizes="(max-width: 768px) 100vw, 300px"
                     />
                   </div>
+                  {backgroundUpload.stats && (
+                    <div className="text-xs text-gray-500 flex justify-between">
+                      <span>Taille: {Math.round(backgroundUpload.stats.compressedSize / 1024)} Ko</span>
+                      <span>Dimensions: {backgroundUpload.stats.width} × {backgroundUpload.stats.height}</span>
+                      <span>Compression: {Math.round((1 - backgroundUpload.stats.compressionRatio) * 100)}%</span>
+                    </div>
+                  )}
                   <Button
-                    onClick={() => removeBackgroundImage && removeBackgroundImage()}
+                    onClick={() => {
+                      if (removeBackgroundImage) {
+                        removeBackgroundImage()
+                        backgroundUpload.reset()
+                      }
+                    }}
                     className="text-red-500 text-sm font-medium flex items-center"
                     variant="text"
                     leftIcon={
@@ -147,15 +183,12 @@ function Step1({
                       type="file"
                       className="hidden"
                       accept="image/*"
-                      onChange={(e) => {
-                        setIsUploading(true);
-                        if (handleBackgroundImageUpload) {
-                          handleBackgroundImageUpload(e);
-                        }
-                        setIsUploading(false);
-                      }}
+                      onChange={handleBackgroundUpload}
                     />
                   </label>
+                  {backgroundUpload.error && (
+                    <p className="text-sm text-red-500 mt-1">{backgroundUpload.error}</p>
+                  )}
                 </div>
               )}
             </div>
