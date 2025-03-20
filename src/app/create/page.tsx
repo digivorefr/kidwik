@@ -199,24 +199,38 @@ function CreateCalendarContent() {
     updateFormField('stickerQuantities', updatedQuantities)
   }
 
-  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement> | { target: { files: [string] } }) => {
+    // Handle case where we're passed a processed image directly as a string
+    if (typeof e.target.files?.[0] === 'string') {
+      const processedImageUrl = e.target.files[0];
+      setChildPhoto(processedImageUrl);
 
-    const reader = new FileReader()
+      // Set default quantity for child photo
+      updateFormField('stickerQuantities', {
+        ...formData.stickerQuantities,
+        childPhoto: 1
+      });
+      return;
+    }
+
+    // Handle normal file upload case
+    const file = e.target.files?.[0] as File;
+    if (!file) return;
+
+    const reader = new FileReader();
     reader.onload = (event) => {
       if (event.target?.result) {
-        setChildPhoto(event.target.result as string)
+        setChildPhoto(event.target.result as string);
 
         // Set default quantity for child photo
         updateFormField('stickerQuantities', {
           ...formData.stickerQuantities,
           childPhoto: 1
-        })
+        });
       }
-    }
-    reader.readAsDataURL(file)
-  }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleBackgroundImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
