@@ -1,68 +1,91 @@
-import type { Metadata } from "next";
-import { Playwrite_IT_Moderna, Itim, Poppins } from "next/font/google";
-import "./globals.css";
+import './globals.css'
+import './tailwind-safelist.css'
+import type { Metadata } from 'next'
+import { Poppins, Itim, Playwrite_IT_Moderna } from 'next/font/google'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 
-// Import layout components
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+// Polices Google
+const poppins = Poppins({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins',
+})
 
+const itim = Itim({
+  weight: ['400'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-itim',
+})
+
+// Polices locales
 const playwriteITModerna = Playwrite_IT_Moderna({
   variable: "--font-playwrite-it-moderna",
   weight: ["400"],
 });
 
-const itim = Itim({
-  variable: "--font-itim",
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
+// Métadonnées par défaut (fallback)
 export const metadata: Metadata = {
-  title: "kidwik - Calendrier visuel personnalisable pour enfants",
-  description: "Créez des calendriers hebdomadaires personnalisés avec des gommettes détachables pour aider les enfants à se repérer dans le temps.",
-  icons: {
-    icon: [
+  metadataBase: new URL('https://kidwik.fr'),
+  title: {
+    template: '%s | kidwik',
+    default: 'kidwik - Calendriers personnalisés pour enfants',
+  },
+  description: 'Créez et personnalisez des calendriers hebdomadaires adaptés aux enfants. Un outil éducatif pour aider au développement de la routine et de l\'autonomie.',
+  keywords: ['calendrier enfant', 'calendrier personnalisé', 'routine enfant', 'outil éducatif', 'planification visuelle'],
+  authors: [{ name: 'kidwik' }],
+  creator: 'kidwik',
+  publisher: 'kidwik',
+  formatDetection: {
+    email: false,
+    telephone: false,
+    address: false,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    siteName: 'kidwik',
+    images: [
       {
-        url: "/favicon-32x32.png",
-        sizes: "32x32",
-        type: "image/png",
-      },
-      {
-        url: "/favicon-16x16.png",
-        sizes: "16x16",
-        type: "image/png",
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'kidwik - Calendriers personnalisés pour enfants',
       },
     ],
-    apple: {
-      url: "/apple-touch-icon.png",
-      sizes: "180x180",
-      type: "image/png",
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'kidwik - Calendriers personnalisés pour enfants',
+    description: 'Créez et personnalisez des calendriers hebdomadaires adaptés aux enfants. Un outil éducatif pour aider au développement de la routine et de l\'autonomie.',
+    images: ['/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
     },
   },
-};
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="fr">
-      <body
-        className={`${playwriteITModerna.variable} ${itim.variable} ${poppins.variable} antialiased bg-white flex flex-col min-h-screen`}
-      >
+    <html lang="fr" className={`${poppins.variable} ${itim.variable} ${playwriteITModerna.variable}`}>
+      <body>
         <Header />
-        <div className="flex-grow">
+        <main className="flex min-h-screen flex-col items-center pb-20">
           {children}
-        </div>
+        </main>
         <Footer />
       </body>
     </html>
-  );
+  )
 }

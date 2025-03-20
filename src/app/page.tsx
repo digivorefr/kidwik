@@ -1,6 +1,20 @@
+import type { Metadata } from 'next'
 import { FadeIn, ScaleIn } from '@/components/ui/motion'
 import Image from 'next/image'
 import { ButtonLink } from '@/components/ui/Button'
+
+export const metadata: Metadata = {
+  title: 'Créez facilement des calendriers visuels pour enfants | kidwik',
+  description: 'kidwik vous permet de créer facilement des calendriers hebdomadaires personnalisés pour enfants. Aidez votre enfant à se repérer dans le temps avec un outil ludique et éducatif.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Créez facilement des calendriers visuels pour enfants | kidwik',
+    description: 'Créez des calendriers hebdomadaires personnalisés pour enfants avec kidwik. Un outil ludique et éducatif pour aider les enfants à se repérer dans le temps.',
+    url: '/',
+  }
+}
 
 export default function Home() {
   return (

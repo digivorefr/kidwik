@@ -85,7 +85,7 @@ export default function ImportCalendarModal({ isOpen, onClose }: ImportCalendarM
           setIsSubmitting(false);
           return;
         }
-      } catch (_) {
+      } catch {
         setError("Le fichier ne contient pas de JSON valide. Vérifiez le format du fichier.");
         setIsSubmitting(false);
         return;
@@ -106,7 +106,7 @@ export default function ImportCalendarModal({ isOpen, onClose }: ImportCalendarM
 
       // Vérifier si c'est une erreur de quota
       if (error instanceof DOMException &&
-          (error.name === 'QuotaExceededError' || error.code === 22)) {
+          error.name === 'QuotaExceededError') {
         setError(
           "Espace de stockage insuffisant. L&apos;application essaie de libérer de l&apos;espace et de compresser les données. " +
           "Si le problème persiste, essayez de supprimer d&apos;anciens calendriers."

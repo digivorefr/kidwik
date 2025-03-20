@@ -1,5 +1,15 @@
+import { Metadata } from 'next'
 import Link from 'next/link';
 import { FadeIn } from '@/components/ui/motion';
+
+export const metadata: Metadata = {
+  title: 'Page non trouvée | kidwik',
+  description: 'La page que vous recherchez n\'existe pas ou a été déplacée. Revenez à l\'accueil pour continuer à utiliser kidwik.',
+  robots: {
+    index: false,
+    follow: true,
+  }
+}
 
 export default function NotFound() {
   return (
@@ -17,7 +27,7 @@ export default function NotFound() {
               Oups ! Cette page semble s&apos;être égarée comme un petit sticker mal placé sur un calendrier.
             </p>
           </div>
-          
+
           <Link
             href="/"
             className="inline-flex items-center justify-center px-6 py-3 bg-[var(--kiwi)] text-white font-medium rounded-lg hover:bg-[var(--kiwi-dark)] transition-colors"
