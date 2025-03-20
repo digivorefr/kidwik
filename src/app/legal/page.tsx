@@ -21,8 +21,8 @@ export default function LegalPage() {
               <p><strong>Digivore</strong></p>
               <p>6 place du castelat</p>
               <p>31460 Caraman</p>
-              <p>SIREN : 123 456 789</p>
-              <p>Email : <EmailProtection emailUser="hello" emailDomain="kidwik.fr" /></p>
+              <p>SIREN : 513 527 879</p>
+              <p>Email : <EmailProtection emailUser="contact" emailDomain="digivore.fr" /></p>
             </div>
           </section>
 
@@ -46,22 +46,22 @@ export default function LegalPage() {
               3. Propriété intellectuelle
             </h2>
             <p className="text-lg">
-              L&apos;ensemble du contenu du site kidwik (interface, code, textes, images, logos) est la propriété 
+              L&apos;ensemble du contenu du site kidwik (interface, code, textes, images, logos) est la propriété
               exclusive de Digivore, à l&apos;exception des éléments fournis par des tiers.
             </p>
             <p className="text-lg">
-              Le code source de kidwik est publié sous licence MIT, ce qui permet sa réutilisation 
-              sous certaines conditions détaillées dans le fichier de licence disponible sur notre 
+              Le code source de kidwik est publié sous licence MIT, ce qui permet sa réutilisation
+              sous certaines conditions détaillées dans le fichier de licence disponible sur notre
               dépôt GitHub.
             </p>
             <p className="text-lg">
-              Les typographies utilisées sont fournies par Google Fonts, selon leurs propres 
+              Les typographies utilisées sont fournies par Google Fonts, selon leurs propres
               conditions d&apos;utilisation.
             </p>
             <p className="text-lg">
-              Toute reproduction, représentation, modification, publication, adaptation de tout ou 
-              partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est 
-              interdite, sauf autorisation écrite préalable de Digivore ou conformément aux termes 
+              Toute reproduction, représentation, modification, publication, adaptation de tout ou
+              partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est
+              interdite, sauf autorisation écrite préalable de Digivore ou conformément aux termes
               de la licence MIT pour le code source.
             </p>
           </section>
@@ -74,8 +74,8 @@ export default function LegalPage() {
               kidwik est conçu dans le respect de votre vie privée.
             </p>
             <p className="text-lg">
-              L&apos;application n&apos;effectue aucune collecte de données personnelles. Toutes les données 
-              que vous créez dans l&apos;application (calendriers, préférences, etc.) sont stockées 
+              L&apos;application n&apos;effectue aucune collecte de données personnelles. Toutes les données
+              que vous créez dans l&apos;application (calendriers, préférences, etc.) sont stockées
               exclusivement sur votre appareil et ne sont jamais transmises à des serveurs externes.
             </p>
             <p className="text-lg">
@@ -88,7 +88,7 @@ export default function LegalPage() {
               5. Loi applicable et juridiction
             </h2>
             <p className="text-lg">
-              Les présentes mentions légales sont soumises au droit français. En cas de litige, 
+              Les présentes mentions légales sont soumises au droit français. En cas de litige,
               les tribunaux français seront seuls compétents.
             </p>
           </section>
@@ -98,7 +98,7 @@ export default function LegalPage() {
               6. Contact
             </h2>
             <p className="text-lg">
-              Pour toute question relative à ces mentions légales, vous pouvez nous contacter 
+              Pour toute question relative à ces mentions légales, vous pouvez nous contacter
               à l&apos;adresse suivante : <EmailProtection emailUser="hello" emailDomain="kidwik.fr" />
             </p>
           </section>

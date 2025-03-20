@@ -6,9 +6,9 @@
   --background-end-rgb: 255, 255, 255;
 
   /* Theme colors */
-  --kiwi-light: #c7e9b0;
-  --kiwi-medium: #a3c4a7;
-  --kiwi-dark: #70a37f;
+  --kiwi-light: #00BA0C;
+  --kiwi-medium: #4BBA00;
+  --kiwi-dark: #006756;
   --kiwi-darker: #1F4D36;
 
   --font-base: var(--font-itim);
@@ -48,7 +48,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #stickers-preview h1,
-#stickers-preview h2, 
+#stickers-preview h2,
 #stickers-preview h3,
 #stickers-preview h4,
 #stickers-preview h5,
@@ -85,12 +85,12 @@ h1, h2, h3, h4, h5, h6 {
     size: A4 landscape;
     margin: 0;
   }
-  
+
   body {
     margin: 0;
     padding: 0;
   }
-  
+
   .page-break-after-always {
     page-break-after: always;
   }

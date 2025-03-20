@@ -16,7 +16,7 @@ export default function AboutPage() {
               Notre mission
             </h2>
             <p className="text-lg">
-              kidwik a été conçu pour aider les enfants à mieux se repérer dans le temps grâce à un calendrier 
+              kidwik a été conçu pour aider les enfants à mieux se repérer dans le temps grâce à un calendrier
               visuel personnalisable et des gommettes représentant différentes activités quotidiennes.
             </p>
           </section>
@@ -26,7 +26,7 @@ export default function AboutPage() {
               Qui sommes-nous ?
             </h2>
             <p className="text-lg">
-              L&apos;application a été conçue par Pierre Bonnin et Sophie Tournière dans un but non lucratif.
+              L&apos;application a été conçue avec l&apos;aide d&apos;une orthophoniste dans un but non lucratif.
               Notre objectif est de fournir un outil pratique et gratuit aux familles et professionnels
               travaillant avec des enfants.
             </p>
@@ -60,8 +60,8 @@ export default function AboutPage() {
               Confidentialité
             </h2>
             <p className="text-lg">
-              Nous respectons entièrement votre vie privée. kidwik n&apos;effectue aucun tracking et ne synchronise 
-              aucune donnée avec un serveur externe. Toutes les données que vous créez (calendriers, 
+              Nous respectons entièrement votre vie privée. kidwik n&apos;effectue aucun tracking et ne synchronise
+              aucune donnée avec un serveur externe. Toutes les données que vous créez (calendriers,
               préférences, etc.) restent exclusivement stockées sur votre appareil et ne sont jamais exploitées.
             </p>
           </section>
@@ -71,7 +71,7 @@ export default function AboutPage() {
               Contactez-nous
             </h2>
             <p className="text-lg">
-              Tous vos retours sont les bienvenus ! Pour nous faire part de vos suggestions, signaler un 
+              Tous vos retours sont les bienvenus ! Pour nous faire part de vos suggestions, signaler un
               problème ou simplement nous dire bonjour, écrivez-nous à : <EmailProtection emailUser="hello" emailDomain="kidwik.fr" />
             </p>
           </section>
