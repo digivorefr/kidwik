@@ -70,7 +70,14 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
   loadCalendarsList: async () => {
     set({ isLoading: true, error: null });
     try {
+      // Ensure initialization is complete first
+      await CalendarStorage.init();
+
+      // Now explicitly reload the calendars list from storage
       const list = await CalendarStorage.getCalendarsList();
+
+      console.log("Loaded calendars list:", list.length, "calendars");
+
       set({ calendarsList: list, isLoading: false });
       return list;
     } catch (error) {
@@ -83,11 +90,20 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
   createNewCalendar: async (name: string) => {
     set({ isLoading: true, error: null });
     try {
+      // S'assurer que le storage est initialisé
+      await CalendarStorage.init();
+
+      console.log(`Création d'un nouveau calendrier: ${name}`);
+
       // Créer avec les valeurs par défaut
       const meta = await CalendarStorage.createCalendar(name, DEFAULT_FORM_DATA, null);
 
+      console.log(`Calendrier créé avec succès: ${meta.id}, ${meta.name}`);
+
       // Mettre à jour la liste
-      const updatedList = [...get().calendarsList, meta];
+      const freshList = await CalendarStorage.getCalendarsList();
+      const updatedList = [...freshList, meta];
+
       set({
         calendarsList: updatedList,
         currentCalendarId: meta.id,
@@ -96,8 +112,8 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
 
       return meta;
     } catch (error) {
-      set({ error: "Erreur lors de la création du calendrier", isLoading: false });
       console.error("Erreur lors de la création du calendrier:", error);
+      set({ error: "Erreur lors de la création du calendrier", isLoading: false });
       throw error;
     }
   },
@@ -123,30 +139,57 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
   saveCurrentCalendar: async (id, formData, childPhoto, previewElement, name) => {
     set({ isLoading: true, error: null });
     try {
+      // Vérifier d'abord si le calendrier existe
+      const existingCalendar = await CalendarStorage.getCalendar(id);
+
       // Générer une prévisualisation si un élément est fourni
       let previewImage: string | undefined;
       if (previewElement) {
         previewImage = await createPreviewImage(previewElement);
       }
 
-      // Mettre à jour le calendrier
-      const meta = await CalendarStorage.updateCalendar(id, {
-        name,
-        formData,
-        childPhoto,
-        previewImage
-      });
+      let meta: SavedCalendarMeta | null = null;
+
+      if (existingCalendar) {
+        console.log(`Mise à jour du calendrier existant: ${id}`);
+        // Mettre à jour le calendrier existant
+        meta = await CalendarStorage.updateCalendar(id, {
+          name,
+          formData,
+          childPhoto,
+          previewImage
+        });
+      } else {
+        console.log(`Création d'un nouveau calendrier avec ID spécifique: ${id}`);
+        // Créer un nouveau calendrier avec l'ID spécifié
+        const calendarName = name || 'Mon calendrier';
+        meta = await CalendarStorage.createCalendar(
+          calendarName,
+          formData,
+          childPhoto,
+          previewImage,
+          id // Passer l'ID explicitement pour assurer qu'il correspond
+        );
+      }
 
       if (meta) {
-        // Mettre à jour la liste locale
-        const updatedList = get().calendarsList.map(item =>
-          item.id === id ? meta : item
-        );
+        // Obtenir la liste la plus récente pour éviter les problèmes de synchronisation
+        const freshList = await CalendarStorage.getCalendarsList();
+
+        // Vérifier si le calendrier actuel existe dans la liste
+        const calendarExists = freshList.some(item => item.id === id);
+
+        // Si le calendrier n'existe pas dans la liste fraîche, l'ajouter
+        const updatedList = calendarExists
+          ? freshList.map(item => item.id === id ? meta : item)
+          : [...freshList, meta];
+
+        console.log(`Calendrier sauvegardé: ${id}, ${meta.name} (${updatedList.length} calendriers total)`);
 
         set({ calendarsList: updatedList, isLoading: false });
         return meta;
       } else {
-        set({ error: "Calendrier non trouvé lors de la sauvegarde", isLoading: false });
+        set({ error: "Échec de la sauvegarde du calendrier", isLoading: false });
         return null;
       }
     } catch (error) {
@@ -204,7 +247,7 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const importedCalendar = await CalendarStorage.importCalendar(jsonString);
-      
+
       if (importedCalendar) {
         // Mettre à jour la liste locale avec le calendrier importé
         const updatedList = [...get().calendarsList, importedCalendar];

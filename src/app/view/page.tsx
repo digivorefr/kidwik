@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { FadeIn } from '@/components/ui/motion';
 import useCalendarStore from '@/lib/store/calendar-store';
 import CalendarsList from '@/components/calendar/CalendarsList';
@@ -11,19 +11,36 @@ import { Button, ButtonLink } from '@/components/ui/Button'
 
 function CalendarsViewContent() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const calendarId = searchParams.get('id');
-  const { loadCalendarsList, calendarsList } = useCalendarStore();
+  const { loadCalendarsList, calendarsList, initializeStore } = useCalendarStore();
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
+  // Cette fonction va charger complètement la liste des calendriers
+  // à chaque fois que l'utilisateur visite la page
   useEffect(() => {
     const initialize = async () => {
-      await loadCalendarsList();
-      setInitialized(true);
+      try {
+        // Réinitialiser le stockage
+        await initializeStore();
+
+        // Forcer un rechargement complet de la liste des calendriers
+        await loadCalendarsList();
+
+        setInitialized(true);
+      } catch (error) {
+        console.error("Erreur lors du chargement des calendriers:", error);
+        setInitialized(true); // On met quand même à true pour ne pas bloquer l'interface
+      }
     };
 
+    // Lancer l'initialisation
     initialize();
-  }, [loadCalendarsList]);
+
+    // Le pathname est utilisé comme dépendance pour s'assurer que
+    // l'effet s'exécute à chaque fois que l'utilisateur navigue vers cette page
+  }, [loadCalendarsList, initializeStore, pathname]);
 
   if (!initialized) {
     return (

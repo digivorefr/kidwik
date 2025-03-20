@@ -2,15 +2,18 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
 import { FadeIn } from '@/components/ui/motion';
 import { Button, ButtonLink } from '@/components/ui/Button';
+import useCalendarStore from '@/lib/store/calendar-store';
 
 export default function NewCalendarPage() {
   const router = useRouter();
   const [calendarName, setCalendarName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Récupérer la fonction de création de calendrier du store
+  const { createNewCalendar } = useCalendarStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,12 +27,13 @@ export default function NewCalendarPage() {
     setError(null);
 
     try {
-      // Générer un ID unique pour le nouveau calendrier
-      const newCalendarId = uuidv4();
+      // Créer un nouveau calendrier et obtenir les métadonnées
+      const newCalendarMeta = await createNewCalendar(calendarName);
 
-      // Rediriger vers la page de création avec l'ID du nouveau calendrier
-      // et le nom comme paramètre dans l'URL
-      router.push(`/create?id=${newCalendarId}&name=${encodeURIComponent(calendarName)}`);
+      console.log("Nouveau calendrier créé:", newCalendarMeta.id, newCalendarMeta.name);
+
+      // Rediriger vers la page de création avec l'ID du calendrier nouvellement créé
+      router.push(`/create?id=${newCalendarMeta.id}`);
     } catch (err) {
       console.error('Error creating calendar:', err);
       setError('Une erreur est survenue. Veuillez réessayer.');

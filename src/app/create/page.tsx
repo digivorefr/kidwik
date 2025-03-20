@@ -67,32 +67,19 @@ function CreateCalendarContent() {
         return
       }
 
-      // Vérifier si un paramètre 'name' est présent dans l'URL (cas d'un nouveau calendrier)
-      const nameParam = searchParams.get('name')
-      if (nameParam) {
-        setCalendarName(decodeURIComponent(nameParam))
-      }
-
       try {
+        // Charger le calendrier existant avec l'ID fourni
         const calendar = await loadCalendar(calendarId)
         if (calendar) {
+          console.log(`Calendrier chargé: ${calendarId}`, calendar.meta.name)
           setFormData(calendar.formData)
           setChildPhoto(calendar.childPhoto)
-          // Ne pas écraser le nom si on vient de la page 'new' avec un paramètre 'name'
-          if (!nameParam) {
-            setCalendarName(calendar.meta.name)
-          }
+          setCalendarName(calendar.meta.name)
           setCurrentCalendarId(calendarId)
         } else {
-          // Si le calendrier n'existe pas mais qu'on a un ID et un nom dans l'URL,
-          // c'est probablement un nouveau calendrier
-          if (!nameParam) {
-            // Rediriger vers la page de création si on n'a pas de nom dans les paramètres
-            router.replace('/create/new')
-            return
-          }
-          // Sinon, on continue avec les valeurs par défaut
-          setCurrentCalendarId(calendarId)
+          console.error(`Calendrier non trouvé: ${calendarId}`)
+          router.replace('/create/new')
+          return
         }
       } catch (error) {
         console.error('Erreur lors du chargement du calendrier:', error)
@@ -108,19 +95,29 @@ function CreateCalendarContent() {
 
   // Sauvegarde automatique lors des modifications
   useEffect(() => {
+    // Ne pas sauvegarder si nous sommes toujours en chargement initial
+    if (isLoading || !calendarId) return;
+
     // Sauvegarde avec debounce pour éviter trop d'écritures
-    const saveCalendarDebounced = setTimeout(() => {
-      if (calendarId && !isLoading) {
+    const saveCalendarDebounced = setTimeout(async () => {
+      try {
         // Référence à l'élément de prévisualisation pour générer une miniature
         const previewElement = document.querySelector('.calendar-preview-container') as HTMLElement
 
-        saveCurrentCalendar(calendarId, formData, childPhoto, previewElement)
-          .catch(err => console.error('Erreur lors de la sauvegarde automatique:', err))
-      }
-    }, 2000) // Délai de 2 secondes
+        const result = await saveCurrentCalendar(calendarId, formData, childPhoto, previewElement, calendarName);
 
-    return () => clearTimeout(saveCalendarDebounced)
-  }, [formData, childPhoto, calendarId, isLoading, saveCurrentCalendar])
+        if (result) {
+          console.log(`Sauvegarde automatique réussie pour le calendrier: ${calendarId}`);
+        } else {
+          console.error(`Échec de la sauvegarde automatique pour le calendrier: ${calendarId}`);
+        }
+      } catch (err) {
+        console.error('Erreur lors de la sauvegarde automatique:', err);
+      }
+    }, 1000); // Délai réduit à 1 seconde pour une réactivité accrue
+
+    return () => clearTimeout(saveCalendarDebounced);
+  }, [formData, childPhoto, calendarId, calendarName, isLoading, saveCurrentCalendar]);
 
   // Synchroniser le mode de prévisualisation avec l'étape actuelle
   // mais seulement si le mode n'a pas été manuellement changé par l'utilisateur
@@ -244,14 +241,53 @@ function CreateCalendarContent() {
   const handleSave = async () => {
     if (calendarId) {
       try {
-        await saveCurrentCalendar(calendarId, formData, childPhoto)
+        // Référence à l'élément de prévisualisation pour générer une miniature
+        const previewElement = document.querySelector('.calendar-preview-container') as HTMLElement
+
+        await saveCurrentCalendar(calendarId, formData, childPhoto, previewElement, calendarName)
         alert('Calendrier sauvegardé avec succès!')
       } catch (error) {
         console.error('Erreur lors de la sauvegarde:', error)
-        alert('Une erreur est survenue lors de la sauvegarde du calendrier')
+        alert('Erreur lors de la sauvegarde du calendrier')
       }
     }
   }
+
+  // Forcer une sauvegarde immédiate avant de naviguer ailleurs
+  const handleNavigateAway = async (destination: string) => {
+    if (!calendarId) return router.push(destination);
+
+    try {
+      setIsLoading(true);
+      // Référence à l'élément de prévisualisation pour générer une miniature
+      const previewElement = document.querySelector('.calendar-preview-container') as HTMLElement;
+
+      // Sauvegarde explicite avant la navigation
+      const result = await saveCurrentCalendar(calendarId, formData, childPhoto, previewElement, calendarName);
+
+      if (result) {
+        console.log("Sauvegarde explicite réussie avant navigation vers:", destination);
+
+        // Attendre un court instant pour assurer la synchronisation du stockage
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        // Navigation une fois la sauvegarde terminée
+        router.push(destination);
+      } else {
+        console.error("Échec de la sauvegarde avant navigation");
+        alert("La sauvegarde a échoué. Voulez-vous quand même naviguer vers la page suivante?");
+        // Naviguer quand même si l'utilisateur le souhaite
+        router.push(destination);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde avant navigation:", error);
+      alert("Une erreur s'est produite lors de la sauvegarde. Voulez-vous quand même naviguer vers la page suivante?");
+      // Naviguer quand même si l'utilisateur le souhaite
+      router.push(destination);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Navigation handlers
   const goToNextStep = () => {
@@ -368,13 +404,20 @@ function CreateCalendarContent() {
               </p>
             </div>
 
-            <div className="mt-4 md:mt-0">
+            <div className="mt-4 md:mt-0 flex gap-2">
               <Button
                 onClick={handleSave}
                 variant="outline"
                 size="sm"
               >
                 Sauvegarder
+              </Button>
+              <Button
+                onClick={() => handleNavigateAway('/view')}
+                variant="primary"
+                size="sm"
+              >
+                Voir mes calendriers
               </Button>
             </div>
           </div>
