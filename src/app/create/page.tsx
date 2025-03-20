@@ -138,8 +138,6 @@ function CreateCalendarContent() {
       newPreviewMode = 'calendar';
     }
 
-    console.log('newPreviewMode', newPreviewMode)
-
     // Mettre à jour le mode de prévisualisation si nécessaire
     if (formData.options.previewMode !== newPreviewMode) {
       updateFormField('options', { ...formData.options, previewMode: newPreviewMode });

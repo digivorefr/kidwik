@@ -43,8 +43,6 @@ function PreviewSection({
 
   // Sync with formData when it changes from outside
   useEffect(() => {
-    console.log('formData.options.previewMode', formData.options.previewMode)
-    console.log('currentView', currentView)
     if (formData.options.previewMode !== currentView) {
       setCurrentView(formData.options.previewMode || 'calendar')
     }
