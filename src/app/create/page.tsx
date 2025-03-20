@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ChangeEvent, useCallback, useEffect, Suspense } from 'react'
+import { useState, ChangeEvent, useCallback, useEffect, Suspense, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FadeIn } from '@/components/ui/motion'
 import {
@@ -56,7 +56,7 @@ function CreateCalendarContent() {
   }, [])
 
   // État pour suivre si l'utilisateur a modifié manuellement le mode de prévisualisation
-  const [userModifiedPreviewMode, setUserModifiedPreviewMode] = useState(false)
+  const userModifiedPreviewMode = useRef(false)
 
   // Charge le calendrier existant ou redirige vers la page de création
   useEffect(() => {
@@ -67,17 +67,32 @@ function CreateCalendarContent() {
         return
       }
 
+      // Vérifier si un paramètre 'name' est présent dans l'URL (cas d'un nouveau calendrier)
+      const nameParam = searchParams.get('name')
+      if (nameParam) {
+        setCalendarName(decodeURIComponent(nameParam))
+      }
+
       try {
         const calendar = await loadCalendar(calendarId)
         if (calendar) {
           setFormData(calendar.formData)
           setChildPhoto(calendar.childPhoto)
-          setCalendarName(calendar.meta.name)
+          // Ne pas écraser le nom si on vient de la page 'new' avec un paramètre 'name'
+          if (!nameParam) {
+            setCalendarName(calendar.meta.name)
+          }
           setCurrentCalendarId(calendarId)
         } else {
-          // Calendrier non trouvé, rediriger
-          router.replace('/create/new')
-          return
+          // Si le calendrier n'existe pas mais qu'on a un ID et un nom dans l'URL,
+          // c'est probablement un nouveau calendrier
+          if (!nameParam) {
+            // Rediriger vers la page de création si on n'a pas de nom dans les paramètres
+            router.replace('/create/new')
+            return
+          }
+          // Sinon, on continue avec les valeurs par défaut
+          setCurrentCalendarId(calendarId)
         }
       } catch (error) {
         console.error('Erreur lors du chargement du calendrier:', error)
@@ -89,7 +104,7 @@ function CreateCalendarContent() {
     }
 
     loadExistingCalendar()
-  }, [calendarId, loadCalendar, router, setCurrentCalendarId])
+  }, [calendarId, loadCalendar, router, setCurrentCalendarId, searchParams])
 
   // Sauvegarde automatique lors des modifications
   useEffect(() => {
@@ -111,7 +126,7 @@ function CreateCalendarContent() {
   // mais seulement si le mode n'a pas été manuellement changé par l'utilisateur
   useEffect(() => {
     // Ne pas synchroniser si l'utilisateur a modifié manuellement le mode de prévisualisation
-    if (userModifiedPreviewMode) return;
+    if (userModifiedPreviewMode.current) return;
 
     // Déterminer le mode de prévisualisation en fonction de l'étape actuelle
     let newPreviewMode: PreviewMode;
@@ -123,11 +138,13 @@ function CreateCalendarContent() {
       newPreviewMode = 'calendar';
     }
 
+    console.log('newPreviewMode', newPreviewMode)
+
     // Mettre à jour le mode de prévisualisation si nécessaire
     if (formData.options.previewMode !== newPreviewMode) {
       updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
     }
-  }, [currentStep, formData.options, updateFormField, userModifiedPreviewMode]);
+    }, [currentStep, formData.options, updateFormField, userModifiedPreviewMode]);
 
   const totalSteps = 3
 
@@ -307,13 +324,13 @@ function CreateCalendarContent() {
 
   // Fonction pour changer manuellement le mode de prévisualisation
   const handlePreviewModeChange = (mode: PreviewMode) => {
-    setUserModifiedPreviewMode(true);
+    userModifiedPreviewMode.current = true;
     updateFormField('options', { ...formData.options, previewMode: mode });
 
     // Réinitialiser après un certain délai pour permettre la synchronisation automatique
     // lors du prochain changement d'étape
     setTimeout(() => {
-      setUserModifiedPreviewMode(false);
+      userModifiedPreviewMode.current = false;
     }, 3000); // Réinitialise après 3 secondes d'inactivité
   }
 

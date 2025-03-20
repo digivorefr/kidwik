@@ -14,9 +14,9 @@ export interface CalendarDay {
   }
 }
 
-export type TailwindColor = 
-  'red' | 'orange' | 'amber' | 'yellow' | 'lime' | 'green' | 'emerald' | 
-  'teal' | 'cyan' | 'sky' | 'blue' | 'indigo' | 'violet' | 'purple' | 
+export type TailwindColor =
+  'red' | 'orange' | 'amber' | 'yellow' | 'lime' | 'green' | 'emerald' |
+  'teal' | 'cyan' | 'sky' | 'blue' | 'indigo' | 'violet' | 'purple' |
   'fuchsia' | 'pink' | 'rose' | 'slate' | 'gray' | 'zinc' | 'neutral' | 'stone'
 
 // Define the PreviewMode type for consistent use across the application
@@ -52,14 +52,18 @@ export const DEFAULT_FORM_DATA: CalendarFormData = {
 
 export const PRESET_ACTIVITIES: Activity[] = [
   { id: 'school', name: 'École', icon: '🏫', isPreset: true },
-  { id: 'breakfast', name: 'Petit-déjeuner', icon: '🥐', isPreset: true },
-  { id: 'lunch', name: 'Déjeuner', icon: '🍽️', isPreset: true },
-  { id: 'dinner', name: 'Dîner', icon: '🍲', isPreset: true },
+  { id: 'lunch', name: 'Repas', icon: '🍽️', isPreset: true },
   { id: 'bath', name: 'Bain/Douche', icon: '🛁', isPreset: true },
+  { id: 'sleep', name: 'Repos', icon: '🛏️', isPreset: true },
   { id: 'teeth', name: 'Brossage de dents', icon: '🪥', isPreset: true },
   { id: 'dressing', name: 'Habillage', icon: '👕', isPreset: true },
   { id: 'sports', name: 'Sport', icon: '⚽', isPreset: true },
   { id: 'homework', name: 'Devoirs', icon: '📚', isPreset: true },
   { id: 'reading', name: 'Lecture', icon: '📖', isPreset: true },
-  { id: 'tv', name: 'Télévision', icon: '📺', isPreset: true }
+  { id: 'tv', name: 'Télévision', icon: '📺', isPreset: true },
+  { id: 'video-game', name: 'Jeux vidéo', icon: '🎮', isPreset: true },
+  { id: 'mom', name: 'Maman', icon: '👩', isPreset: true },
+  { id: 'dad', name: 'Papa', icon: '👨', isPreset: true },
+  { id: 'grandpa', name: 'Grand-père', icon: '👴', isPreset: true },
+  { id: 'grandma', name: 'Grand-mère', icon: '👵', isPreset: true },
 ]
