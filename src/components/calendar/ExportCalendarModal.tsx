@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import useCalendarStore from '@/lib/store/calendar-store';
 import Modal from '../ui/Modal';
-import { Button, IconButton } from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 
 interface ExportCalendarModalProps {
   isOpen: boolean;
@@ -12,44 +12,74 @@ interface ExportCalendarModalProps {
 }
 
 export default function ExportCalendarModal({ isOpen, onClose, calendarId }: ExportCalendarModalProps) {
-  const [exportedData, setExportedData] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [exportData, setExportData] = useState<string | null>(null);
+  const [calendarName, setCalendarName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [downloadReady, setDownloadReady] = useState(false);
   const { exportCalendar } = useCalendarStore();
 
   useEffect(() => {
-    const fetchExportData = async () => {
-      setIsLoading(true);
-      setError(null);
+    async function fetchExportData() {
+      if (isOpen && calendarId) {
+        setIsLoading(true);
+        setError(null);
+        setDownloadReady(false);
 
-      try {
         const data = await exportCalendar(calendarId);
-        setExportedData(data);
-      } catch {
-        setError("Erreur lors de l'exportation du calendrier");
-      } finally {
+
+        if (data) {
+          setExportData(data);
+          // Extraire le nom du calendrier à partir des données exportées
+          try {
+            const parsedData = JSON.parse(data);
+            if (parsedData.meta && parsedData.meta.name) {
+              setCalendarName(parsedData.meta.name);
+            }
+          } catch (e) {
+            console.error("Erreur lors de l'analyse des données exportées:", e);
+          }
+          setDownloadReady(true);
+        } else {
+          setError("Erreur lors de l'exportation du calendrier");
+        }
+
         setIsLoading(false);
       }
-    };
-
-    if (isOpen) {
-      fetchExportData();
     }
+
+    fetchExportData();
   }, [isOpen, calendarId, exportCalendar]);
 
-  const handleCopyToClipboard = async () => {
-    if (!exportedData) return;
+  const handleDownload = () => {
+    if (!exportData) return;
 
-    try {
-      await navigator.clipboard.writeText(exportedData);
-      setCopySuccess(true);
+    // Créer un objet Blob à partir des données JSON
+    const blob = new Blob([exportData], { type: 'application/json' });
 
-      // Reset le message de succès après 3 secondes
-      setTimeout(() => setCopySuccess(false), 3000);
-    } catch {
-      setError("Impossible de copier dans le presse-papier");
-    }
+    // Créer un URL pour le Blob
+    const url = URL.createObjectURL(blob);
+
+    // Créer un élément a temporaire
+    const a = document.createElement('a');
+    a.href = url;
+
+    // Formater la date actuelle pour le nom de fichier
+    const date = new Date().toISOString().split('T')[0];
+    const sanitizedName = calendarName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    // Définir le nom du fichier
+    a.download = `kidwik_${sanitizedName}_${date}.json`;
+
+    // Ajouter l'élément au document
+    document.body.appendChild(a);
+
+    // Cliquer sur le lien
+    a.click();
+
+    // Nettoyer
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -62,51 +92,43 @@ export default function ExportCalendarModal({ isOpen, onClose, calendarId }: Exp
         )}
 
         {isLoading ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[var(--kiwi-dark)]"></div>
+          <div className="flex justify-center my-6">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--kiwi-dark)]"></div>
           </div>
         ) : (
-          <>
-            <p className="text-gray-700">
-              Voici les données de votre calendrier. Copiez-les et enregistrez-les pour pouvoir les importer ultérieurement.
-            </p>
-
-            <div className="relative">
-              <textarea
-                value={exportedData || ''}
-                readOnly
-                className="w-full h-40 p-3 border border-gray-300 rounded-md font-mono text-sm bg-gray-50"
-              />
-
-              <IconButton
-                onClick={handleCopyToClipboard}
-                ariaLabel="Copier dans le presse-papier"
-                icon={
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-12a2 2 0 00-2-2h-2M8 5a2 2 0 002-2h4a2 2 0 002 2M8 5a2 2 0 01-2 2h10a2 2 0 01-2-2" />
-                  </svg>
-                }
-                className="absolute top-2 right-2 px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50"
-              />
-            </div>
-
-            {copySuccess && (
-              <div className="p-2 bg-green-50 text-green-700 rounded-md text-sm">
-                Données copiées dans le presse-papier!
+          <div className="flex flex-col gap-4">
+            {downloadReady && (
+              <div className="p-4 bg-green-50 text-green-800 rounded-md flex flex-col items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-center font-medium">Votre calendrier est prêt à être téléchargé !</p>
+                <p className="text-center text-sm">Cliquez sur le bouton ci-dessous pour télécharger le fichier JSON.</p>
               </div>
             )}
 
-            <div className="flex justify-end gap-3 mt-2">
+            <div className="flex flex-col gap-3 mt-2">
+              <p className="text-gray-700">
+                Le fichier téléchargé contient toutes les données de votre calendrier, que vous pourrez importer ultérieurement.
+              </p>
+
               <Button
-                type="button"
-                onClick={onClose}
+                onClick={handleDownload}
                 variant="primary"
+                disabled={!downloadReady}
+                className="w-full"
               >
-                Fermer
+                Télécharger le fichier JSON
               </Button>
             </div>
-          </>
+          </div>
         )}
+
+        <div className="flex justify-end mt-4">
+          <Button type="button" onClick={onClose} variant="outline">
+            Fermer
+          </Button>
+        </div>
       </div>
     </Modal>
   );
