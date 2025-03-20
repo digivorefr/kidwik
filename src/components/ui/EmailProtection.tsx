@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from './Button';
+
 interface EmailProtectionProps {
   emailUser: string;
   emailDomain: string;
@@ -11,12 +13,13 @@ export default function EmailProtection({ emailUser, emailDomain }: EmailProtect
   };
 
   return (
-    <button 
+    <Button
       onClick={handleClick}
-      className="text-[var(--kiwi-darker)] font-medium hover:underline inline-block"
+      variant="text"
       aria-label="Nous contacter"
+      className="font-medium text-[var(--kiwi-darker)]"
     >
       {emailUser}[at]{emailDomain}
-    </button>
+    </Button>
   );
 }

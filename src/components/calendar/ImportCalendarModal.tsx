@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useCalendarStore from '@/lib/store/calendar-store';
 import Modal from '../ui/Modal';
+import { Button } from '@/components/ui/Button';
 
 interface ImportCalendarModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ export default function ImportCalendarModal({ isOpen, onClose }: ImportCalendarM
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!jsonData.trim()) {
       setError("Veuillez entrer des données JSON valides");
       return;
@@ -30,10 +31,10 @@ export default function ImportCalendarModal({ isOpen, onClose }: ImportCalendarM
 
     try {
       const importedCalendar = await importCalendar(jsonData);
-      
+
       if (importedCalendar) {
         onClose();
-        
+
         // Rediriger vers la vue détaillée du calendrier importé
         router.push(`/view?id=${importedCalendar.id}`);
       } else {
@@ -54,11 +55,11 @@ export default function ImportCalendarModal({ isOpen, onClose }: ImportCalendarM
             {error}
           </div>
         )}
-        
+
         <p className="text-gray-700">
           Collez les données JSON du calendrier que vous souhaitez importer.
         </p>
-        
+
         <div>
           <textarea
             value={jsonData}
@@ -68,22 +69,23 @@ export default function ImportCalendarModal({ isOpen, onClose }: ImportCalendarM
             required
           />
         </div>
-        
+
         <div className="flex justify-end gap-3 mt-2">
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer"
+            variant="outline"
           >
             Annuler
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 bg-[var(--kiwi)] text-white rounded-md hover:bg-[var(--kiwi-dark)] disabled:opacity-70 cursor-pointer"
+            variant="primary"
+            isLoading={isSubmitting}
           >
             {isSubmitting ? 'Importation...' : 'Importer'}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

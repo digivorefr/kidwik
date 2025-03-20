@@ -5,6 +5,7 @@ import StickerPreview from '@/components/calendar/StickerPreview'
 import ImageStickerPreview from '@/components/calendar/ImageStickerPreview'
 import { PRESET_ACTIVITIES } from '@/app/create/types'
 import Image from 'next/image'
+import { Button, IconButton } from '@/components/ui/Button'
 
 function Step2({
   formData,
@@ -29,7 +30,7 @@ function Step2({
     const quantity = formData.stickerQuantities[activityId] || 1
 
     return (
-      <div className="flex items-center justify-center mt-1 bg-gray-100 rounded px-1 py-0.5">
+      <div className="flex items-center justify-center mt-1 bg-gray-100 rounded-full px-0.5 py-0.5">
         <button
           type="button"
           className="w-5 h-5 flex items-center justify-center rounded-full bg-white hover:bg-gray-200 border border-gray-300 text-gray-500 cursor-pointer"
@@ -171,17 +172,18 @@ function Step2({
               <p className="text-sm text-gray-600 mb-3">
                 Personnalisez avec des photos des lieux familiers (école, crèche, parc préféré...) pour que votre enfant s&apos;identifie plus facilement à son calendrier.
               </p>
-              <button
+              <Button
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                variant="outline"
+                className="flex items-center justify-center w-full h-16 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                leftIcon={
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  <span className="text-sm font-medium text-gray-600">Ajouter une gommette personnalisée</span>
-                </div>
-              </button>
+                }
+              >
+                <span className="text-sm font-medium text-gray-600">Ajouter une gommette personnalisée</span>
+              </Button>
             </div>
 
             {/* Custom activities in a separate block */}
@@ -274,28 +276,30 @@ function Step2({
               <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-medium">Ajouter une gommette personnalisée</h3>
-                  <button
+                  <IconButton
                     onClick={() => {
                       setIsModalOpen(false)
                       setCustomImage(null)
                     }}
                     className="text-gray-500 hover:text-gray-700"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+                    ariaLabel="Fermer"
+                    icon={
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    }
+                  />
                 </div>
 
                 <div className="mb-4 flex shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.1)]">
                   <button
-                    className={`px-4 py-2 ${modalTab === 'upload' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
+                    className={`p-2 text-left text-xs ${modalTab === 'upload' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
                     onClick={() => setModalTab('upload')}
                   >
                     Uploader une photo
                   </button>
                   <button
-                    className={`px-4 py-2 ${modalTab === 'icons' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
+                    className={`p-2 text-left text-xs ${modalTab === 'icons' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
                     onClick={() => setModalTab('icons')}
                   >
                     Choisir un pictogramme
@@ -317,18 +321,20 @@ function Step2({
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <button
+                          <Button
                             onClick={() => setCustomImage(null)}
-                            className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-gray-700"
+                            variant="outline"
+                            className="flex-1"
                           >
                             Changer
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={addCustomImageActivity}
-                            className="flex-1 py-2 px-4 bg-[var(--kiwi-dark)] text-white rounded-md"
+                            variant="primary"
+                            className="flex-1"
                           >
                             Ajouter au calendrier
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ) : (
@@ -355,13 +361,14 @@ function Step2({
                   <div className="space-y-4">
                     <div className="grid grid-cols-4 md:grid-cols-6 gap-4 max-h-64 overflow-y-auto pr-4">
                       {availableIcons.map(icon => (
-                        <button
+                        <Button
                           key={icon}
                           className="w-fill h-auto aspect-square flex items-center justify-center text-3xl border border-gray-300 rounded hover:bg-gray-100"
                           onClick={() => addCustomIconActivity(icon)}
+                          variant="outline"
                         >
                           {icon}
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>

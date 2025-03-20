@@ -7,6 +7,7 @@ import { PreviewSectionProps } from './types'
 import { useState, useEffect } from 'react'
 import {motion, Variants} from 'motion/react';
 import { PreviewMode } from '@/app/create/types'
+import { ChipButton } from '@/components/ui/Button'
 
 const containerVariants: Variants = {
   hidden: {
@@ -70,40 +71,43 @@ function PreviewSection({
         <h2 className="text-xl font-semibold mb-4 sm:mb-0">Prévisualisation</h2>
 
         {/* Toggle buttons for preview modes */}
-        <div className="flex rounded-full bg-[var(--kiwi-dark)] p-0.5 self-center sm:self-auto">
-          <button
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 cursor-pointer ${
+        <div className="flex rounded-full bg-gray-200 p-0.5 self-center sm:self-auto">
+          <ChipButton
+            isActive={currentView === 'calendar'}
+            onClick={() => handleToggleView('calendar')}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
               currentView === 'calendar'
                 ? 'bg-white text-[var(--kiwi-darker)]'
                 : 'text-white'
             }`}
-            onClick={() => handleToggleView('calendar')}
             data-preview-mode-toggle="calendar"
           >
             Calendrier
-          </button>
-          <button
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 cursor-pointer ${
+          </ChipButton>
+          <ChipButton
+            isActive={currentView === 'stickers'}
+            onClick={() => handleToggleView('stickers')}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
               currentView === 'stickers'
                 ? 'bg-white text-[var(--kiwi-darker)]'
                 : 'text-white'
             }`}
-            onClick={() => handleToggleView('stickers')}
             data-preview-mode-toggle="stickers"
           >
             Gommettes
-          </button>
-          <button
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 cursor-pointer ${
+          </ChipButton>
+          <ChipButton
+            isActive={currentView === 'all'}
+            onClick={() => handleToggleView('all')}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
               currentView === 'all'
                 ? 'bg-white text-[var(--kiwi-darker)]'
                 : 'text-white'
             }`}
-            onClick={() => handleToggleView('all')}
             data-preview-mode-toggle="all"
           >
             Tout
-          </button>
+          </ChipButton>
         </div>
       </div>
 

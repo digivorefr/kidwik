@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import useCalendarStore from '@/lib/store/calendar-store';
 import Modal from '../ui/Modal';
+import { Button, IconButton } from '@/components/ui/Button';
 
 interface ExportCalendarModalProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ export default function ExportCalendarModal({ isOpen, onClose, calendarId }: Exp
     const fetchExportData = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const data = await exportCalendar(calendarId);
         setExportedData(data);
@@ -39,11 +40,11 @@ export default function ExportCalendarModal({ isOpen, onClose, calendarId }: Exp
 
   const handleCopyToClipboard = async () => {
     if (!exportedData) return;
-    
+
     try {
       await navigator.clipboard.writeText(exportedData);
       setCopySuccess(true);
-      
+
       // Reset le message de succès après 3 secondes
       setTimeout(() => setCopySuccess(false), 3000);
     } catch {
@@ -59,7 +60,7 @@ export default function ExportCalendarModal({ isOpen, onClose, calendarId }: Exp
             {error}
           </div>
         )}
-        
+
         {isLoading ? (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[var(--kiwi-dark)]"></div>
@@ -69,36 +70,40 @@ export default function ExportCalendarModal({ isOpen, onClose, calendarId }: Exp
             <p className="text-gray-700">
               Voici les données de votre calendrier. Copiez-les et enregistrez-les pour pouvoir les importer ultérieurement.
             </p>
-            
+
             <div className="relative">
               <textarea
                 value={exportedData || ''}
                 readOnly
                 className="w-full h-40 p-3 border border-gray-300 rounded-md font-mono text-sm bg-gray-50"
               />
-              
-              <button
+
+              <IconButton
                 onClick={handleCopyToClipboard}
-                className="absolute top-2 right-2 px-2 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 cursor-pointer"
-              >
-                Copier
-              </button>
+                ariaLabel="Copier dans le presse-papier"
+                icon={
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-12a2 2 0 00-2-2h-2M8 5a2 2 0 002-2h4a2 2 0 002 2M8 5a2 2 0 01-2 2h10a2 2 0 01-2-2" />
+                  </svg>
+                }
+                className="absolute top-2 right-2 px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-50"
+              />
             </div>
-            
+
             {copySuccess && (
               <div className="p-2 bg-green-50 text-green-700 rounded-md text-sm">
                 Données copiées dans le presse-papier!
               </div>
             )}
-            
+
             <div className="flex justify-end gap-3 mt-2">
-              <button
+              <Button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-[var(--kiwi)] text-white rounded-md hover:bg-[var(--kiwi-dark)] cursor-pointer"
+                variant="primary"
               >
                 Fermer
-              </button>
+              </Button>
             </div>
           </>
         )}

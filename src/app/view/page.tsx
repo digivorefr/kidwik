@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FadeIn } from '@/components/ui/motion';
 import useCalendarStore from '@/lib/store/calendar-store';
 import CalendarsList from '@/components/calendar/CalendarsList';
 import CalendarDetail from '@/components/calendar/CalendarDetail';
 import ImportCalendarModal from '@/components/calendar/ImportCalendarModal';
+import { Button, ButtonLink } from '@/components/ui/Button'
 
 function CalendarsViewContent() {
   const searchParams = useSearchParams();
@@ -21,7 +21,7 @@ function CalendarsViewContent() {
       await loadCalendarsList();
       setInitialized(true);
     };
-    
+
     initialize();
   }, [loadCalendarsList]);
 
@@ -47,18 +47,20 @@ function CalendarsViewContent() {
                 Mes calendriers
               </h1>
               <div className="flex flex-col sm:flex-row gap-3">
-                <button
+                <Button
                   onClick={() => setIsImportModalOpen(true)}
-                  className="px-4 py-2 rounded-lg border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium hover:bg-[var(--kiwi-lightest)] transition-colors"
+                  variant="outline"
+                  size="md"
                 >
                   Importer un calendrier
-                </button>
-                <Link
+                </Button>
+                <ButtonLink
                   href="/create/new"
-                  className="btn-primary px-4 py-2 rounded-lg text-center font-medium"
+                  variant="primary"
+                  size="md"
                 >
                   Créer un calendrier
-                </Link>
+                </ButtonLink>
               </div>
             </div>
 

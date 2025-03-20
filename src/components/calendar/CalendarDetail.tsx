@@ -11,6 +11,7 @@ import ExportCalendarModal from './ExportCalendarModal';
 import StickerSheet from './StickerSheet';
 import { getThemeClasses } from './types';
 import { DayOfWeek } from '@/app/create/types';
+import { Button, ButtonLink } from '@/components/ui/Button'
 
 // Mapping des jours anglais vers français
 const dayTranslations: Record<DayOfWeek, string> = {
@@ -58,7 +59,7 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
 
   const handleDelete = async () => {
     if (!calendar) return;
-    
+
     if (confirm(`Êtes-vous sûr de vouloir supprimer le calendrier "${calendar.meta.name}" ?`)) {
       try {
         await deleteCalendar(calendarId);
@@ -88,8 +89,8 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
       <div className="p-6 bg-red-50 rounded-lg">
         <h2 className="text-xl font-medium text-red-700 mb-2">Erreur</h2>
         <p className="text-red-600 mb-4">{error || "Calendrier non trouvé"}</p>
-        <Link 
-          href="/view" 
+        <Link
+          href="/view"
           className="px-4 py-2 bg-[var(--kiwi-dark)] text-white rounded-lg"
         >
           Retour à la liste
@@ -99,7 +100,7 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
   }
 
   const themeClasses = getThemeClasses(calendar.formData.theme);
-  
+
   // Traduire les jours de l'anglais vers le français
   const weekDays = calendar.formData.days?.map(day => {
     // Si le jour est déjà en français, le retourner tel quel
@@ -126,49 +127,64 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
     <div className="flex flex-col gap-8 items-center max-w-3xl mx-auto">
       {/* Header avec navigation et informations */}
       <div className="flex flex-col items-center text-center w-full">
-        <Link 
-          href="/view" 
-          className="text-[var(--kiwi-dark)] hover:underline mb-4 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--kiwi-lightest)]"
+        <Link
+          href="/view"
+          className="mb-4 inline-flex items-center text-[var(--kiwi-dark)] hover:text-[var(--kiwi-medium)] transition-colors"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          <svg
+            className="w-4 h-4 mr-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            ></path>
           </svg>
           Retour aux calendriers
         </Link>
-        
+
         <h1 className="text-3xl font-bold text-[var(--kiwi-darker)] mb-2">
           {calendar.meta.name}
         </h1>
-        
+
         <p className="text-gray-600 mb-6">
           Modifié le {formatDate(calendar.meta.updatedAt)}
         </p>
-        
+
         <div className="flex flex-wrap justify-center gap-2 mb-2">
-          <button
+          <Button
             onClick={() => setIsRenameModalOpen(true)}
-            className="px-3 py-1.5 rounded-full border border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer text-sm"
+            variant="text"
+            size="sm"
           >
             Renommer
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setIsExportModalOpen(true)}
-            className="px-3 py-1.5 rounded-full border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] hover:bg-[var(--kiwi-lightest)] transition-colors cursor-pointer text-sm"
+            variant="outline"
+            size="sm"
           >
             Exporter
-          </button>
-          <Link
+          </Button>
+          <ButtonLink
             href={`/create?id=${calendarId}`}
-            className="px-3 py-1.5 rounded-full bg-[var(--kiwi-medium)] hover:bg-[var(--kiwi-dark)] text-white transition-colors cursor-pointer text-sm"
+            variant="secondary"
+            size="sm"
           >
             Modifier
-          </Link>
-          <button
+          </ButtonLink>
+          <Button
             onClick={handleDelete}
-            className="px-3 py-1.5 rounded-full bg-red-600 hover:bg-red-700 text-white transition-colors cursor-pointer text-sm"
+            variant="danger"
+            size="sm"
           >
             Supprimer
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -179,13 +195,13 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
           <h2 className="text-2xl font-bold text-[var(--kiwi-darker)] mb-4 text-center">
             Calendrier
           </h2>
-          <CalendarPreview 
+          <CalendarPreview
             weekDays={weekDays}
             themeClasses={themeClasses}
             backgroundImage={calendar.formData.backgroundImage || null}
           />
         </div>
-        
+
         {/* Prévisualisation des stickers */}
         {calendar.formData.selectedActivities && calendar.formData.selectedActivities.length > 0 && (
           <div className="flex flex-col items-center">
@@ -210,7 +226,7 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
           calendar={calendar}
         />
       )}
-      
+
       {isExportModalOpen && (
         <ExportCalendarModal
           isOpen={isExportModalOpen}

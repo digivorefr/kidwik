@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import { FadeIn, ScaleIn } from '@/components/ui/motion'
 import Image from 'next/image'
+import { ButtonLink } from '@/components/ui/Button'
 
 export default function Home() {
   return (
@@ -24,18 +24,20 @@ export default function Home() {
 
           <FadeIn delay={0.2}>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link
+              <ButtonLink
                 href="/create/new"
-                className="btn-primary px-6 py-3 rounded-lg text-center font-medium"
+                variant="primary"
+                size="lg"
               >
                 Créer mon calendrier
-              </Link>
-              <Link
+              </ButtonLink>
+              <ButtonLink
                 href="/view"
-                className="px-6 py-3 rounded-lg text-center border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium"
+                variant="outline"
+                size="lg"
               >
                 Mes calendriers
-              </Link>
+              </ButtonLink>
             </div>
           </FadeIn>
         </div>
@@ -78,12 +80,13 @@ export default function Home() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link
+          <ButtonLink
             href="/create/new"
-            className="btn-primary px-6 py-3 rounded-lg text-center font-medium inline-block"
+            variant="primary"
+            size="lg"
           >
             Commencer maintenant
-          </Link>
+          </ButtonLink>
         </div>
       </section>
     </>

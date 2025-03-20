@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { FadeIn } from '@/components/ui/motion'
 import { FormStepProps } from './types'
 import { TailwindColor } from '@/app/create/types'
+import { Button, ChipButton, ColorButton } from '@/components/ui/Button'
 
 function Step1({
   formData,
@@ -115,16 +116,18 @@ function Step1({
                       sizes="(max-width: 768px) 100vw, 300px"
                     />
                   </div>
-                  <button
+                  <Button
                     onClick={() => removeBackgroundImage && removeBackgroundImage()}
-                    className="text-red-500 text-sm font-medium flex items-center cursor-pointer"
-                    type="button"
+                    className="text-red-500 text-sm font-medium flex items-center"
+                    variant="text"
+                    leftIcon={
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    }
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
                     Supprimer l&apos;image
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -163,20 +166,20 @@ function Step1({
 
             {/* Filtres par groupe de couleur */}
             <div className="flex flex-wrap gap-2 mb-4">
-              <button
-                className={`px-3 py-1 text-sm rounded-full cursor-pointer ${selectedColorGroup === null ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-700'}`}
+              <ChipButton
+                isActive={selectedColorGroup === null}
                 onClick={() => setSelectedColorGroup(null)}
               >
                 Toutes
-              </button>
+              </ChipButton>
               {Object.keys(colorGroups).map(group => (
-                <button
+                <ChipButton
                   key={group}
-                  className={`px-3 py-1 text-sm rounded-full cursor-pointer ${selectedColorGroup === group ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-700'}`}
+                  isActive={selectedColorGroup === group}
                   onClick={() => setSelectedColorGroup(group as ColorGroupName)}
                 >
                   {group}
-                </button>
+                </ChipButton>
               ))}
             </div>
 
@@ -184,9 +187,10 @@ function Step1({
             <div className="flex flex-wrap gap-3 mb-2 relative text-center">
               {colorsToDisplay.map(color => (
                 <div key={color} className="relative w-[clamp(2.4rem,12%,100%)] flex flex-col items-center">
-                  <button
-                    className={`w-full h-auto aspect-square rounded-full border-2 cursor-pointer ${getColorClasses(color)} ${formData.theme === color ? 'ring-2 ring-offset-2 ring-gray-900' : ''}`}
-                    aria-label={`Thème ${getColorName(color)}`}
+                  <ColorButton
+                    colorClass={getColorClasses(color)}
+                    colorName={getColorName(color)}
+                    isSelected={formData.theme === color}
                     onClick={() => updateFormField('theme', color)}
                   />
                   <span className="text-xs mt-1 text-gray-600">{getColorName(color)}</span>

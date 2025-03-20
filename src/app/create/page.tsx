@@ -20,6 +20,7 @@ import {
   AccordionStep
 } from '@/components/create-form'
 import useCalendarStore from '@/lib/store/calendar-store'
+import { Button } from '@/components/ui/Button'
 
 // Loading component to show while suspended
 function CalendarEditorLoading() {
@@ -353,12 +354,13 @@ function CreateCalendarContent() {
             </div>
 
             <div className="mt-4 md:mt-0">
-              <button
+              <Button
                 onClick={handleSave}
-                className="px-4 py-2 rounded-full text-sm border border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium hover:bg-[var(--kiwi-light)] transition-colors cursor-pointer"
+                variant="outline"
+                size="sm"
               >
                 Sauvegarder
-              </button>
+              </Button>
             </div>
           </div>
         </FadeIn>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { SavedCalendar } from '@/types/saved-calendar';
 import useCalendarStore from '@/lib/store/calendar-store';
 import Modal from '../ui/Modal';
+import { Button } from '@/components/ui/Button';
 
 interface RenameCalendarModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ export default function RenameCalendarModal({ isOpen, onClose, calendar }: Renam
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!newName.trim()) {
       setError("Le nom ne peut pas être vide");
       return;
@@ -31,17 +32,17 @@ export default function RenameCalendarModal({ isOpen, onClose, calendar }: Renam
     try {
       // Charger les données actuelles du calendrier
       const currentCalendar = await loadCalendar(calendar.meta.id);
-      
+
       if (!currentCalendar) {
         throw new Error("Calendrier non trouvé");
       }
-      
+
       // Mettre à jour les données avec le nouveau nom
       const updatedFormData = {
         ...currentCalendar.formData,
         calendarName: newName
       };
-      
+
       // Sauvegarder le calendrier avec le nouveau nom
       await saveCurrentCalendar(
         calendar.meta.id,
@@ -50,7 +51,7 @@ export default function RenameCalendarModal({ isOpen, onClose, calendar }: Renam
         undefined,
         newName
       );
-      
+
       onClose();
     } catch {
       setError("Erreur lors du renommage du calendrier");
@@ -67,7 +68,7 @@ export default function RenameCalendarModal({ isOpen, onClose, calendar }: Renam
             {error}
           </div>
         )}
-        
+
         <div>
           <label htmlFor="calendar-name" className="block mb-1 font-medium">
             Nouveau nom
@@ -82,22 +83,23 @@ export default function RenameCalendarModal({ isOpen, onClose, calendar }: Renam
             required
           />
         </div>
-        
+
         <div className="flex justify-end gap-3 mt-2">
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer"
+            variant="outline"
           >
             Annuler
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 bg-[var(--kiwi-medium)] text-white rounded-md hover:bg-[var(--kiwi-dark)] disabled:opacity-70 shadow-md cursor-pointer"
+            variant="primary"
+            isLoading={isSubmitting}
           >
             {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

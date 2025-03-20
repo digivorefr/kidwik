@@ -2,6 +2,7 @@
 
 import { ReactNode, useRef } from 'react'
 import { motion, Variants } from 'motion/react'
+import { Button } from '@/components/ui/Button'
 
 interface AccordionStepProps {
   step: number
@@ -85,11 +86,12 @@ export default function AccordionStep({
       animate="animate"
       custom={isActive}
     >
-      <button
+      <Button
         onClick={handleStepChange}
-        className="w-full py-2 px-4 text-left border border-transparent text-sm font-medium flex space-between items-center cursor-pointer"
+        variant="text"
+        className="w-full text-left border border-transparent flex space-between items-center"
       >
-        <span className='flex-auto'>{title}</span>
+        <span className='flex-auto text-left px-4'>{title}</span>
         <motion.span
           className='flex-none'
           key={`step-${step}-arrow`}
@@ -99,7 +101,7 @@ export default function AccordionStep({
         >
           &rarr;
         </motion.span>
-      </button>
+      </Button>
       <motion.div
         variants={stepContentVariants}
         key={`step-${step}-content`}
