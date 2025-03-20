@@ -4,6 +4,13 @@ import { getThemeClasses } from '@/components/calendar/types'
 // Define ThemeClasses type based on the return type of getThemeClasses
 export type ThemeClasses = ReturnType<typeof getThemeClasses>
 
+// Type for events with processed images
+export interface ProcessedImageEvent {
+  target: {
+    files: [string] // Array with exactly one string (the processed image URL)
+  }
+}
+
 export interface FormStepProps {
   formData: CalendarFormData;
   updateFormField: (field: keyof CalendarFormData, value: unknown) => void;
@@ -16,7 +23,7 @@ export interface FormStepProps {
 
 export interface Step2Props extends FormStepProps {
   childPhoto: string | null;
-  handlePhotoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePhotoUpload: (e: React.ChangeEvent<HTMLInputElement> | ProcessedImageEvent) => void;
   handleActivityToggle: (activity: Activity) => void;
   updateStickerQuantity: (activityId: string, quantity: number) => void;
   removeCustomActivity: (id: string) => void;

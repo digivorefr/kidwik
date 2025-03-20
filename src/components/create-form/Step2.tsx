@@ -8,6 +8,13 @@ import Image from 'next/image'
 import { Button, IconButton } from '@/components/ui/Button'
 import useImageUpload from '@/lib/hooks/useImageUpload'
 
+// Type for our synthetic event with processed image
+interface ProcessedImageEvent {
+  target: {
+    files: [string] // Array with exactly one string (the processed image URL)
+  }
+}
+
 function Step2({
   formData,
   childPhoto,
@@ -54,12 +61,19 @@ function Step2({
     const file = e.target.files?.[0]
     if (!file) return
 
-    // First pass the original event to the parent handler
-    handlePhotoUpload(e)
+    // Process the image for optimization
+    const processedImageUrl = await childPhotoUpload.upload(file)
 
-    // Then process the image for optimization and analytics only
-    // We don't need to use the result since the parent already has the image
-    await childPhotoUpload.upload(file)
+    // If processing was successful, pass the processed image directly to the parent
+    if (processedImageUrl) {
+      // Pass the processed image URL directly to the parent's handlePhotoUpload
+      // The parent function has been modified to handle both File objects and direct data URLs
+      handlePhotoUpload({
+        target: {
+          files: [processedImageUrl]
+        }
+      } as ProcessedImageEvent)
+    }
   }, [childPhotoUpload, handlePhotoUpload])
 
   // Handler for custom image upload

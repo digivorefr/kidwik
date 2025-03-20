@@ -9,6 +9,7 @@ import {
   Activity,
   PreviewMode
 } from './types'
+import { ProcessedImageEvent } from '@/components/create-form/types'
 
 // Import the extracted components
 import { getThemeClasses } from '@/components/calendar/types'
@@ -199,8 +200,25 @@ function CreateCalendarContent() {
     updateFormField('stickerQuantities', updatedQuantities)
   }
 
-  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+  const handlePhotoUpload = (e: ChangeEvent<HTMLInputElement> | ProcessedImageEvent) => {
+    // If we received a processed image event
+    if ('files' in e.target && Array.isArray(e.target.files) && e.target.files.length > 0) {
+      const processedImageUrl = e.target.files[0]
+      if (typeof processedImageUrl === 'string') {
+        setChildPhoto(processedImageUrl)
+
+        // Set default quantity for child photo
+        updateFormField('stickerQuantities', {
+          ...formData.stickerQuantities,
+          childPhoto: 1
+        })
+        return
+      }
+    }
+
+    // Handle standard file upload case - we know it's a ChangeEvent<HTMLInputElement> at this point
+    const fileInput = e as ChangeEvent<HTMLInputElement>
+    const file = fileInput.target.files?.[0]
     if (!file) return
 
     const reader = new FileReader()
