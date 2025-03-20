@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import useCalendarStore from '@/lib/store/calendar-store';
 import CalendarDetail from '@/components/calendar/CalendarDetail';
 import { FadeIn } from '@/components/ui/motion';
 
-export default function CalendarDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function CalendarDetailPage() {
+  const { id } = useParams();
   const { loadCalendar } = useCalendarStore();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +16,7 @@ export default function CalendarDetailPage({ params }: { params: { id: string } 
     const checkCalendarExists = async () => {
       setIsLoading(true);
       try {
-        const calendar = await loadCalendar(id);
+        const calendar = await loadCalendar(id as string);
         if (!calendar) {
           notFound();
         }
@@ -49,7 +49,7 @@ export default function CalendarDetailPage({ params }: { params: { id: string } 
   return (
     <div className="container mx-auto py-4 md:py-8">
       <FadeIn>
-        <CalendarDetail calendarId={id} />
+        <CalendarDetail calendarId={id as string} />
       </FadeIn>
     </div>
   );

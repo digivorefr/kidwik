@@ -250,39 +250,6 @@ function CreateCalendarContent() {
     }
   }
 
-  // Forcer une sauvegarde immédiate avant de naviguer ailleurs
-  const handleNavigateAway = async (destination: string) => {
-    if (!calendarId) return router.push(destination);
-
-    try {
-      setIsLoading(true);
-      // Référence à l'élément de prévisualisation pour générer une miniature
-      const previewElement = document.querySelector('.calendar-preview-container') as HTMLElement;
-
-      // Sauvegarde explicite avant la navigation
-      const result = await saveCurrentCalendar(calendarId, formData, childPhoto, previewElement, calendarName);
-
-      if (result) {
-        // Attendre un court instant pour assurer la synchronisation du stockage
-        await new Promise(resolve => setTimeout(resolve, 300));
-
-        // Navigation une fois la sauvegarde terminée
-        router.push(destination);
-      } else {
-        console.error("Échec de la sauvegarde avant navigation");
-        alert("La sauvegarde a échoué. Voulez-vous quand même naviguer vers la page suivante?");
-        // Naviguer quand même si l'utilisateur le souhaite
-        router.push(destination);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la sauvegarde avant navigation:", error);
-      alert("Une erreur s'est produite lors de la sauvegarde. Voulez-vous quand même naviguer vers la page suivante?");
-      // Naviguer quand même si l'utilisateur le souhaite
-      router.push(destination);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Navigation handlers
   const goToNextStep = () => {
@@ -406,13 +373,6 @@ function CreateCalendarContent() {
                 size="sm"
               >
                 Sauvegarder
-              </Button>
-              <Button
-                onClick={() => handleNavigateAway('/view')}
-                variant="primary"
-                size="sm"
-              >
-                Voir mes calendriers
               </Button>
             </div>
           </div>
