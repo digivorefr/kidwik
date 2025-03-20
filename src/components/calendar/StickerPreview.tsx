@@ -27,10 +27,10 @@ export default function StickerPreview({ activity, themeClasses }: StickerPrevie
     <div className={cn(
       'sticker-preview',
       themeClasses.stickerBg,
-      'w-[2cm] h-[2cm] rounded-full flex items-center justify-center border-4',
+      'w-[2cm] h-[2cm] rounded-full flex items-center justify-center border-4 @container',
       themeClasses.stickerBorder
     )}>
-      <span className="text-[2.25cqw]">{activity.icon}</span>
+      <span className="text-[60cqw]">{activity.icon}</span>
     </div>
   )
 }

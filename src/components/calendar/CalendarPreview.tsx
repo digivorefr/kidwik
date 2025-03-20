@@ -27,11 +27,11 @@ export default function CalendarPreview({ weekDays, themeClasses, backgroundImag
       >
         <div className="flex-auto flex flex-col gap-2 relative z-10">
           {/* Days of week */}
-          <div className="flex-none grid grid-cols-7 gap-4">
+          <div className="flex-none grid grid-cols-7 gap-4 @container">
             {weekDays.map((day, index) => (
               <div
                 key={index}
-                className={`${themeClasses.dayHeaderBg} p-2 text-center text-white text-[0.9cqw] rounded-md`}
+                className={`${themeClasses.dayHeaderBg} p-2 text-center text-white text-[1.8cqw] rounded-md`}
               >
                 {day}
               </div>
