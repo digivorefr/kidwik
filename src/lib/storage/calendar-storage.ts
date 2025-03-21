@@ -2,6 +2,7 @@ import localforage from 'localforage';
 import { v4 as uuidv4 } from 'uuid';
 import { SavedCalendar, SavedCalendarMeta, SavedCalendarsList } from '@/types/saved-calendar';
 import { CalendarFormData } from '@/app/create/types';
+import { SINGLE_DAY_MOMENT } from '@/app/create/types';
 
 // Clés de stockage
 const CALENDARS_META_KEY = 'kidwik_calendars_meta';
@@ -68,32 +69,41 @@ export const CalendarStorage = {
     await this.init();
 
     try {
-      // D'abord essayer de récupérer le calendrier non compressé
-      const calendar = await localforage.getItem<SavedCalendar>(`${CALENDAR_DATA_PREFIX}${id}`);
+      const key = `${CALENDAR_DATA_PREFIX}${id}`;
+      const data = await localforage.getItem(key);
 
-      if (calendar) {
-        return calendar;
+      if (!data) {
+        return null;
       }
 
-      // Si le calendrier n'est pas trouvé, vérifier s'il existe une version compressée
-      const compressedData = await localforage.getItem<string>(`${CALENDAR_DATA_PREFIX}${id}_compressed`);
+      let calendar: SavedCalendar;
 
-      if (compressedData) {
-        // Décompresser les données
-        const decompressedString = await this.decompressString(compressedData);
-
-        if (decompressedString) {
-          try {
-            // Parser le JSON décompressé
-            const decompressedCalendar = JSON.parse(decompressedString) as SavedCalendar;
-            return decompressedCalendar;
-          } catch (error) {
-            console.error('Erreur lors du parsing du calendrier décompressé:', error);
+      // Vérifier le type de données récupérées
+      if (typeof data === 'object' && data !== null) {
+        // Les données sont déjà un objet (non compressé)
+        calendar = data as SavedCalendar;
+      } else if (typeof data === 'string') {
+        // Les données sont une chaîne - soit JSON brut, soit compressé
+        try {
+          if (data.startsWith('{')) {
+            // C'est déjà du JSON
+            calendar = JSON.parse(data) as SavedCalendar;
+          } else {
+            // C'est probablement compressé
+            const decompressedData = await this.decompressString(data);
+            calendar = JSON.parse(decompressedData) as SavedCalendar;
           }
+        } catch (parseError) {
+          console.error(`Erreur lors du parsing des données pour ${id}:`, parseError);
+          return null;
         }
+      } else {
+        console.error(`Format de données non reconnu pour ${id}:`, data);
+        return null;
       }
 
-      return null;
+      // Migrer les données vers le nouveau format si nécessaire
+      return this.migrateCalendarData(calendar);
     } catch (error) {
       console.error(`Erreur lors de la récupération du calendrier ${id}:`, error);
       return null;
@@ -129,15 +139,21 @@ export const CalendarStorage = {
       childPhoto
     };
 
-    // Sauvegarder les données du calendrier
-    await localforage.setItem(`${CALENDAR_DATA_PREFIX}${id}`, calendarData);
+    try {
+      // Sauvegarder les données du calendrier au format JSON
+      const jsonString = JSON.stringify(calendarData);
+      await localforage.setItem(`${CALENDAR_DATA_PREFIX}${id}`, jsonString);
 
-    // Mettre à jour la liste des métadonnées
-    const list = await this.getCalendarsList();
-    list.push(meta);
-    await localforage.setItem(CALENDARS_META_KEY, list);
+      // Mettre à jour la liste des métadonnées
+      const list = await this.getCalendarsList();
+      list.push(meta);
+      await localforage.setItem(CALENDARS_META_KEY, list);
 
-    return meta;
+      return meta;
+    } catch (error) {
+      console.error("Erreur lors de la création du calendrier:", error);
+      throw error;
+    }
   },
 
   /**
@@ -169,92 +185,25 @@ export const CalendarStorage = {
         childPhoto: updates.childPhoto !== undefined ? updates.childPhoto : calendar.childPhoto
       };
 
-      // Vérifier si le calendrier était compressé
-      const isCompressed = 'isCompressed' in calendar.meta && calendar.meta.isCompressed === true;
-      const compressedKey = `${CALENDAR_DATA_PREFIX}${id}_compressed`;
       const regularKey = `${CALENDAR_DATA_PREFIX}${id}`;
 
       try {
-        // Si c'était un calendrier compressé, essayer d'abord de le sauvegarder sans compression
-        if (isCompressed) {
-          await localforage.removeItem(compressedKey);
-          try {
-            await localforage.setItem(regularKey, updatedData);
+        // Toujours essayer de sauvegarder sans compression d'abord
+        const jsonString = JSON.stringify(updatedData);
+        await localforage.setItem(regularKey, jsonString);
 
-            // Mise à jour réussie sans compression
-            // Mettre à jour la liste des métadonnées pour retirer le flag de compression
-            const list = await this.getCalendarsList();
-            const updatedList = list.map(item =>
-              item.id === id ? { ...updatedMeta, isCompressed: false } : item
-            );
-            await localforage.setItem(CALENDARS_META_KEY, updatedList);
+        // Mise à jour réussie sans compression
+        // Mettre à jour la liste des métadonnées
+        const list = await this.getCalendarsList();
+        const updatedList = list.map(item =>
+          item.id === id ? updatedMeta : item
+        );
+        await localforage.setItem(CALENDARS_META_KEY, updatedList);
 
-            return updatedMeta;
-          } catch (error) {
-            // Si l'erreur est liée au quota, compresser
-            const isQuotaError =
-              error instanceof DOMException &&
-              (error.name === 'QuotaExceededError' || error.code === 22);
-
-            if (isQuotaError) {
-              // Continuer avec la compression
-              throw error;
-            } else {
-              // Autre erreur
-              console.error("Erreur lors de la mise à jour du calendrier:", error);
-              return null;
-            }
-          }
-        } else {
-          // Calendrier non compressé, essayer une mise à jour normale
-          await localforage.setItem(regularKey, updatedData);
-
-          // Mettre à jour la liste des métadonnées
-          const list = await this.getCalendarsList();
-          const updatedList = list.map(item => item.id === id ? updatedMeta : item);
-          await localforage.setItem(CALENDARS_META_KEY, updatedList);
-
-          return updatedMeta;
-        }
+        return updatedMeta;
       } catch (error) {
-        // Vérifier si c'est une erreur de quota
-        const isQuotaError =
-          error instanceof DOMException &&
-          (error.name === 'QuotaExceededError' || error.code === 22);
-
-        if (isQuotaError) {
-          console.warn('Quota dépassé lors de la mise à jour. Tentative de nettoyage et compression...');
-
-          // Nettoyer le stockage
-          await this.cleanupStorage();
-
-          // Compresser les données
-          const jsonData = JSON.stringify(updatedData);
-          const compressedData = await this.compressString(jsonData);
-
-          // Essayer de sauvegarder avec les données compressées
-          await localforage.setItem(compressedKey, compressedData);
-
-          // Supprimer la version non compressée si elle existe
-          await localforage.removeItem(regularKey);
-
-          // Mettre à jour la liste des métadonnées avec un marqueur de compression
-          const listCompressed = await this.getCalendarsList();
-          const metaCompressed = {
-            ...updatedMeta,
-            isCompressed: true // Ajouter un marqueur pour savoir que ce calendrier est compressé
-          };
-          const updatedListCompressed = listCompressed.map(item =>
-            item.id === id ? metaCompressed : item
-          );
-          await localforage.setItem(CALENDARS_META_KEY, updatedListCompressed);
-
-          return metaCompressed;
-        } else {
-          // Autre type d'erreur
-          console.error("Erreur lors de la mise à jour du calendrier:", error);
-          return null;
-        }
+        console.error("Erreur lors de la mise à jour du calendrier:", error);
+        return null;
       }
     } catch (error) {
       console.error("Erreur lors de la mise à jour du calendrier:", error);
@@ -358,6 +307,22 @@ export const CalendarStorage = {
    */
   async decompressString(compressedString: string): Promise<string> {
     try {
+      // Vérifier si la donnée est déjà un objet JSON (non compressé)
+      if (typeof compressedString === 'string' &&
+          (compressedString.startsWith('{') || compressedString.startsWith('['))) {
+        return compressedString;
+      }
+
+      // S'assurer que nous avons une chaîne
+      if (typeof compressedString !== 'string') {
+        console.error('La donnée n\'est pas une chaîne:', compressedString);
+        // Si c'est un objet, essayer de le stringifier directement
+        if (typeof compressedString === 'object') {
+          return JSON.stringify(compressedString);
+        }
+        return String(compressedString);
+      }
+
       // Convertir la chaîne base64 en tableau d'octets
       const uint8Array = this.base64ToArrayBuffer(compressedString);
 
@@ -436,23 +401,34 @@ export const CalendarStorage = {
    * Utilitaire pour convertir une chaîne Base64 en ArrayBuffer sans utiliser atob
    */
   base64ToArrayBuffer(base64: string): Uint8Array {
-    // Normaliser le base64 URL-safe
-    const normalizedBase64 = base64
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
-
-    // Ajouter le padding si nécessaire
-    const padding = normalizedBase64.length % 4;
-    const paddedBase64 = padding ?
-      normalizedBase64 + '='.repeat(4 - padding) :
-      normalizedBase64;
-
-    const binary = window.atob(paddedBase64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      bytes[i] = binary.charCodeAt(i);
+    // S'assurer que nous avons une chaîne
+    if (typeof base64 !== 'string') {
+      console.error('L\'entrée base64 n\'est pas une chaîne:', base64);
+      return new Uint8Array(0);
     }
-    return bytes;
+
+    try {
+      // Normaliser le base64 URL-safe
+      const normalizedBase64 = base64
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+      // Ajouter le padding si nécessaire
+      const padding = normalizedBase64.length % 4;
+      const paddedBase64 = padding ?
+        normalizedBase64 + '='.repeat(4 - padding) :
+        normalizedBase64;
+
+      const binary = window.atob(paddedBase64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    } catch (error) {
+      console.error('Erreur lors de la conversion base64 en ArrayBuffer:', error);
+      return new Uint8Array(0);
+    }
   },
 
   /**
@@ -489,7 +465,18 @@ export const CalendarStorage = {
    * Décodage sécurisé d'une chaîne base64 en Unicode
    */
   base64ToString(base64: string): string {
+    // S'assurer que nous avons une chaîne
+    if (typeof base64 !== 'string') {
+      console.error('L\'entrée base64 n\'est pas une chaîne:', base64);
+      return '';
+    }
+
     try {
+      // Si c'est déjà un objet JSON, le renvoyer tel quel
+      if (base64.startsWith('{') || base64.startsWith('[')) {
+        return base64;
+      }
+
       // Normaliser le base64 URL-safe
       const normalizedBase64 = base64
         .replace(/-/g, '+')
@@ -640,6 +627,24 @@ export const CalendarStorage = {
       console.error("Erreur lors de l'importation du calendrier:", error);
       return null;
     }
+  },
+
+  // Fonction pour migrer les anciennes données vers le nouveau format
+  migrateCalendarData(calendar: SavedCalendar): SavedCalendar {
+    // Créer une copie pour éviter de modifier directement l'objet
+    const migratedCalendar = { ...calendar }
+
+    // Ajouter dayMoments si non présent
+    if (!migratedCalendar.formData.dayMoments) {
+      migratedCalendar.formData.dayMoments = SINGLE_DAY_MOMENT
+    }
+
+    // Ajouter showDayMoments si non présent
+    if (migratedCalendar.formData.options && migratedCalendar.formData.options.showDayMoments === undefined) {
+      migratedCalendar.formData.options.showDayMoments = false
+    }
+
+    return migratedCalendar
   }
 };
 

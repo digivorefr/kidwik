@@ -199,7 +199,8 @@ export default function CalendarDetail({ calendarId }: CalendarDetailProps) {
             weekDays={weekDays}
             themeClasses={themeClasses}
             backgroundImage={calendar.formData.backgroundImage || null}
-            uppercaseWeekdays={calendar.formData.options.uppercaseWeekdays ?? false}
+            uppercaseWeekdays={calendar.formData.options.uppercaseWeekdays}
+            dayMoments={calendar.formData.dayMoments}
           />
         </div>
 

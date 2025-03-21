@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import html2canvas from 'html2canvas-pro';
 import { SavedCalendar, SavedCalendarMeta, SavedCalendarsList } from '@/types/saved-calendar';
 import CalendarStorage from '@/lib/storage/calendar-storage';
-import { CalendarFormData, DEFAULT_FORM_DATA } from '@/app/create/types';
+import { CalendarFormData, DEFAULT_FORM_DATA, SINGLE_DAY_MOMENT } from '@/app/create/types';
 
 interface CalendarState {
   // État
@@ -117,6 +117,14 @@ export const useCalendarStore = create<CalendarState>((set, get) => ({
     try {
       const calendar = await CalendarStorage.getCalendar(id);
       if (calendar) {
+        // Migration: Vérifier et ajouter dayMoments et showDayMoments si nécessaire pour les anciens calendriers
+        if (!calendar.formData.dayMoments) {
+          calendar.formData.dayMoments = SINGLE_DAY_MOMENT;
+        }
+        if (calendar.formData.options && calendar.formData.options.showDayMoments === undefined) {
+          calendar.formData.options.showDayMoments = false;
+        }
+
         set({ currentCalendarId: id, isLoading: false });
         return calendar;
       } else {

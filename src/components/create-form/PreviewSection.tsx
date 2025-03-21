@@ -65,7 +65,7 @@ function PreviewSection({
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-3 md:p-6 rounded-lg shadow-md">
       {/* Header with title and toggle buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <h2 className="text-xl font-semibold mb-4 sm:mb-0">Prévisualisation</h2>
@@ -114,7 +114,7 @@ function PreviewSection({
       {/* Preview content */}
       <div className="space-y-8">
         <motion.div
-          className="calendar-preview-container"
+          className="calendar-preview-container @container"
           variants={containerVariants}
           initial="hidden"
           animate={currentView === 'calendar' || currentView === 'all' ? 'visible' : 'hidden'}
@@ -123,7 +123,8 @@ function PreviewSection({
             weekDays={weekDays}
             themeClasses={themeClasses}
             backgroundImage={formData.backgroundImage}
-            uppercaseWeekdays={formData.options.uppercaseWeekdays ?? false}
+            uppercaseWeekdays={formData.options.uppercaseWeekdays}
+            dayMoments={formData.dayMoments}
           />
         </motion.div>
         <motion.div
