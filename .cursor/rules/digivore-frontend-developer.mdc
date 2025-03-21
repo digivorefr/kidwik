@@ -1,7 +1,7 @@
 ---
-description: Developing frontend web application with seniority
-globs: *.tsx, *.ts, *.js, *.html, *.css, *.scss, *.json
-alwaysApply: false
+description: 
+globs: 
+alwaysApply: true
 ---
 ---
 description: Global rulesset for next + tailwind + motion projects

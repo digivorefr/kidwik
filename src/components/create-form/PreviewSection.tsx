@@ -123,6 +123,7 @@ function PreviewSection({
             weekDays={weekDays}
             themeClasses={themeClasses}
             backgroundImage={formData.backgroundImage}
+            uppercaseWeekdays={formData.options.uppercaseWeekdays ?? false}
           />
         </motion.div>
         <motion.div

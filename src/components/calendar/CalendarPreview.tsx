@@ -7,9 +7,10 @@ interface CalendarPreviewProps {
   weekDays: string[];
   themeClasses: ReturnType<typeof getThemeClasses>;
   backgroundImage?: string | null;
+  uppercaseWeekdays?: boolean;
 }
 
-export default function CalendarPreview({ weekDays, themeClasses, backgroundImage }: CalendarPreviewProps) {
+export default function CalendarPreview({ weekDays, themeClasses, backgroundImage, uppercaseWeekdays = false }: CalendarPreviewProps) {
   return (
     <div
     className="relative w-full h-auto aspect-[297/210] paper-shadow border-[6mm] border-white"
@@ -31,7 +32,11 @@ export default function CalendarPreview({ weekDays, themeClasses, backgroundImag
             {weekDays.map((day, index) => (
               <div
                 key={index}
-                className={`${themeClasses.dayHeaderBg} p-2 text-center text-white text-[1.8cqw] rounded-md`}
+                className={cn(
+                  themeClasses.dayHeaderBg,
+                  'p-2 text-center text-white text-[1.8cqw] rounded-md',
+                  uppercaseWeekdays && 'uppercase'
+                )}
               >
                 {day}
               </div>

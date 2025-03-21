@@ -32,6 +32,7 @@ export interface CalendarFormData {
   options: {
     includeStickers: boolean
     includeIllustrations: boolean
+    uppercaseWeekdays: boolean
     previewMode?: PreviewMode
   }
 }
@@ -46,6 +47,7 @@ export const DEFAULT_FORM_DATA: CalendarFormData = {
   options: {
     includeStickers: true,
     includeIllustrations: true,
+    uppercaseWeekdays: false,
     previewMode: 'calendar'
   }
 }
