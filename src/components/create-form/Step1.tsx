@@ -231,6 +231,29 @@ function Step1({
               ))}
             </div>
           </div>
+
+          <div>
+            <h3 className="font-medium mb-2">Options</h3>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="uppercase-weekdays"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  checked={formData.options.uppercaseWeekdays}
+                  onChange={(e) => {
+                    updateFormField('options', {
+                      ...formData.options,
+                      uppercaseWeekdays: e.target.checked
+                    })
+                  }}
+                />
+                <label htmlFor="uppercase-weekdays" className="ml-2 text-sm font-medium text-gray-700">
+                  Jours de la semaine en majuscules
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </FadeIn>
