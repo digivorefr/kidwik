@@ -31,7 +31,7 @@ export default function CalendarPreview({
         className={cn(
           'calendar-preview',
           themeClasses.calendarBg,
-          '@container px-[3cqi] py-[6cqi] w-full h-full bg-cover bg-center flex rounded-[2cqi] m-0'
+          '@container px-[3cqi] py-[4.5cqi] w-full h-full bg-cover bg-center flex rounded-[2cqi] m-0'
         )}
         style={{
           backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
