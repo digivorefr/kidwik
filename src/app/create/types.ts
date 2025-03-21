@@ -14,6 +14,24 @@ export interface CalendarDay {
   }
 }
 
+// Interface générique pour un moment de la journée
+export interface DayMoment {
+  id: string
+  label: string
+}
+
+// Moments de la journée prédéfinis
+export const DEFAULT_DAY_MOMENTS: DayMoment[] = [
+  { id: 'morning', label: '🐓' },
+  { id: 'afternoon', label: '🌞' },
+  { id: 'evening', label: '🌙' }
+]
+
+// Moment unique pour le mode simple
+export const SINGLE_DAY_MOMENT: DayMoment[] = [
+  { id: 'day', label: 'Journée' }
+]
+
 export type TailwindColor =
   'red' | 'orange' | 'amber' | 'yellow' | 'lime' | 'green' | 'emerald' |
   'teal' | 'cyan' | 'sky' | 'blue' | 'indigo' | 'violet' | 'purple' |
@@ -29,10 +47,12 @@ export interface CalendarFormData {
   theme: TailwindColor
   backgroundImage: string | null
   stickerQuantities: Record<string, number>
+  dayMoments: DayMoment[]
   options: {
     includeStickers: boolean
     includeIllustrations: boolean
     uppercaseWeekdays: boolean
+    showDayMoments: boolean
     previewMode?: PreviewMode
   }
 }
@@ -44,10 +64,12 @@ export const DEFAULT_FORM_DATA: CalendarFormData = {
   theme: 'green',
   backgroundImage: null,
   stickerQuantities: {},
+  dayMoments: SINGLE_DAY_MOMENT,
   options: {
     includeStickers: true,
     includeIllustrations: true,
     uppercaseWeekdays: false,
+    showDayMoments: false,
     previewMode: 'calendar'
   }
 }

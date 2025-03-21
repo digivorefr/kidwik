@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { FadeIn } from '@/components/ui/motion'
 import { FormStepProps } from './types'
-import { TailwindColor } from '@/app/create/types'
+import { TailwindColor, DEFAULT_DAY_MOMENTS, SINGLE_DAY_MOMENT } from '@/app/create/types'
 import { Button, ChipButton, ColorButton } from '@/components/ui/Button'
 import useImageUpload from '@/lib/hooks/useImageUpload'
 
@@ -250,6 +250,28 @@ function Step1({
                 />
                 <label htmlFor="uppercase-weekdays" className="ml-2 text-sm font-medium text-gray-700">
                   Jours de la semaine en majuscules
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="show-day-moments"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  checked={formData.options.showDayMoments}
+                  onChange={(e) => {
+                    // Mettre à jour l'option showDayMoments
+                    updateFormField('options', {
+                      ...formData.options,
+                      showDayMoments: e.target.checked
+                    })
+
+                    // Mettre à jour les moments en fonction de l'option
+                    updateFormField('dayMoments', e.target.checked ? DEFAULT_DAY_MOMENTS : SINGLE_DAY_MOMENT)
+                  }}
+                />
+                <label htmlFor="show-day-moments" className="ml-2 text-sm font-medium text-gray-700">
+                  Afficher les moments de la journée (Matin, Après-midi, Soir)
                 </label>
               </div>
             </div>
