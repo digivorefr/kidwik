@@ -12,29 +12,6 @@ interface CalendarPreviewProps {
   dayMoments?: DayMoment[];
 }
 
-// Fonction pour obtenir la classe de couleur avec une intensité spécifique
-function getColorClassWithIntensity(baseClass: string, intensity: number): string {
-  // Le format de baseClass est "bg-color-500" ou similaire
-  // On extrait la couleur et on ajuste l'intensité
-  const parts = baseClass.split('-');
-  if (parts.length < 3) return baseClass;
-
-  const color = parts[1];
-  let level = parseInt(parts[2]);
-
-  // Ajuster le niveau en fonction de l'intensité
-  // Plus l'intensité est élevée, plus la couleur sera foncée (niveau bas)
-  // Plus l'intensité est basse, plus la couleur sera claire (niveau haut)
-  // Niveau de base est 500 (dans themeClasses.dayHeaderBg), on ajuste de façon relative
-  // Une intensité de 1 = même niveau, 0.8 = plus clair, etc.
-  const newLevel = Math.round(600 - (intensity * 100));
-
-  // Assurer que le niveau reste dans les limites de Tailwind (100-900)
-  const safeLevel = Math.max(100, Math.min(900, newLevel));
-
-  return `bg-${color}-${safeLevel}`;
-}
-
 export default function CalendarPreview({
   weekDays,
   themeClasses,
