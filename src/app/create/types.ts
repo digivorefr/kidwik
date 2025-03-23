@@ -18,18 +18,19 @@ export interface CalendarDay {
 export interface DayMoment {
   id: string
   label: string
+  dayPercentage: number
 }
 
 // Moments de la journée prédéfinis
 export const DEFAULT_DAY_MOMENTS: DayMoment[] = [
-  { id: 'morning', label: '🐓' },
-  { id: 'afternoon', label: '🌞' },
-  { id: 'evening', label: '🌙' }
+  { id: 'morning', label: '🐓', dayPercentage: 30 },
+  { id: 'afternoon', label: '🌞', dayPercentage: 40 },
+  { id: 'evening', label: '🌙', dayPercentage: 30 }
 ]
 
 // Moment unique pour le mode simple
 export const SINGLE_DAY_MOMENT: DayMoment[] = [
-  { id: 'day', label: 'Journée' }
+  { id: 'day', label: 'Journée', dayPercentage: 100 }
 ]
 
 export type TailwindColor =
