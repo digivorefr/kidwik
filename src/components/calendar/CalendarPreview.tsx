@@ -62,13 +62,17 @@ export default function CalendarPreview({
                   <div
                     key={`moment-${dayIndex}-${momentIndex}`}
                     className={cn(
-                      `flex-1 py-[1.5cqi] bg-white/80`,
+                      `bg-white/80`,
                       momentIndex === moments.length - 1 && 'rounded-b-[1cqi]'
                     )}
+                    style={{
+                      // Use the dayPercentage to set the height (with fallback to equal distribution)
+                      height: moment.dayPercentage ? `${moment.dayPercentage}%` : `${100 / moments.length}%`
+                    }}
                   >
                     {moments.length > 1 && (
                       <div className={cn(
-                        'text-black align-text-top text-center bg-white rounded-full w-[3cqw] h-[3cqw] mx-auto flex items-center justify-center',
+                        'text-black align-text-top text-center bg-white rounded-full w-[3cqw] h-[3cqw] mx-auto flex items-center justify-center mt-[1cqi]',
                       )}>
                         <span className="leading-none text-[1.2cqw]">
                           {moment.label}
