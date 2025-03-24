@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { Poppins, Itim, Playwrite_IT_Moderna } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider'
 
 // Polices Google
 const poppins = Poppins({
@@ -80,11 +81,13 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${poppins.variable} ${itim.variable} ${playwriteITModerna.variable}`}>
       <body>
-        <Header />
-        <main className="flex min-h-screen flex-col items-center pb-20">
-          {children}
-        </main>
-        <Footer />
+        <ReactQueryProvider>
+          <Header />
+          <main className="flex min-h-screen flex-col items-center pb-20">
+            {children}
+          </main>
+          <Footer />
+        </ReactQueryProvider>
       </body>
     </html>
   )

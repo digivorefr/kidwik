@@ -7,6 +7,8 @@ import { PRESET_ACTIVITIES } from '@/app/create/types'
 import Image from 'next/image'
 import { Button, IconButton } from '@/components/ui/Button'
 import useImageUpload from '@/lib/hooks/useImageUpload'
+import { ArasaacSearch, ArasaacAttribution } from '@/components/stickers'
+import { ArasaacActivity } from '@/types/pictogram'
 
 // Type for our synthetic event with processed image
 interface ProcessedImageEvent {
@@ -27,7 +29,7 @@ function Step2({
   themeClasses,
 }: Step2Props) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [modalTab, setModalTab] = useState<'upload' | 'icons'>('upload')
+  const [modalTab, setModalTab] = useState<'upload' | 'icons' | 'arasaac'>('upload')
 
   // Image upload hook for child photo
   const childPhotoUpload = useImageUpload({
@@ -148,6 +150,21 @@ function Step2({
     }
   }
 
+  // Handler for ARASAAC pictogram selection
+  const handleArasaacSelection = (pictogram: ArasaacActivity) => {
+    updateFormField('customActivities', [...formData.customActivities, pictogram])
+    updateFormField('selectedActivities', [...formData.selectedActivities, pictogram])
+
+    // Set default quantity to 1
+    updateFormField('stickerQuantities', {
+      ...formData.stickerQuantities,
+      [pictogram.id]: 1
+    })
+
+    // Close modal
+    setIsModalOpen(false)
+  }
+
   const addCustomIconActivity = (icon: string) => {
     const newActivity = {
       id: `custom-icon-${Date.now()}`,
@@ -167,6 +184,27 @@ function Step2({
     // Close modal
     setIsModalOpen(false)
   }
+
+  // Handler for changing objectFit property on an activity
+  const handleObjectFitToggle = (activityId: string, objectFit: 'cover' | 'contain') => {
+    // Update the customActivities array with the new objectFit value
+    const updatedCustomActivities = formData.customActivities.map(activity => 
+      activity.id === activityId 
+        ? { ...activity, objectFit } 
+        : activity
+    );
+    
+    // Update the selectedActivities array as well to keep them in sync
+    const updatedSelectedActivities = formData.selectedActivities.map(activity => 
+      activity.id === activityId 
+        ? { ...activity, objectFit } 
+        : activity
+    );
+    
+    // Update both arrays in the form state
+    updateFormField('customActivities', updatedCustomActivities);
+    updateFormField('selectedActivities', updatedSelectedActivities);
+  };
 
   return (
     <FadeIn>
@@ -254,33 +292,46 @@ function Step2({
               <div className="mb-4">
                 <h4 className="text-sm font-medium mb-3">Mes gommettes personnalisées</h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {formData.customActivities.map(activity => (
-                    <div key={activity.id} className="relative">
-                      <label className="cursor-pointer">
-                        <input
-                          type="checkbox"
-                          className="sr-only peer"
-                          checked={formData.selectedActivities.some(a => a.id === activity.id)}
-                          onChange={() => handleActivityToggle(activity)}
-                        />
-                        <div className="flex flex-col items-center space-y-2 p-2 rounded-lg border-2 border-transparent peer-checked:border-[var(--kiwi-dark)] peer-checked:bg-[var(--kiwi-light)]/20">
-                          <StickerPreview
-                            activity={activity}
-                            themeClasses={themeClasses}
+                  {formData.customActivities.map(activity => {
+                    const isSelected = formData.selectedActivities.some(a => a.id === activity.id);
+                    
+                    return (
+                      <div key={activity.id} className="relative">
+                        <label className="cursor-pointer">
+                          <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={isSelected}
+                            onChange={() => {
+                              // Seulement permettre la sélection (pas la désélection) par le clic
+                              if (!isSelected) {
+                                handleActivityToggle(activity);
+                              }
+                            }}
                           />
-                          <span className="text-sm">{activity.name}</span>
-                          {renderQuantityControls(activity.id)}
-                        </div>
-                      </label>
-                      <button
-                        onClick={() => removeCustomActivity(activity.id)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                        aria-label="Supprimer"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
+                          <div className="flex flex-col items-center space-y-2 p-2 rounded-lg border-2 border-transparent peer-checked:border-[var(--kiwi-dark)] peer-checked:bg-[var(--kiwi-light)]/20">
+                            <StickerPreview
+                              activity={activity}
+                              themeClasses={themeClasses}
+                              allowObjectFitToggle={true}
+                              onObjectFitToggle={handleObjectFitToggle}
+                            />
+                            <span className="text-sm">{activity.name}</span>
+                            {renderQuantityControls(activity.id)}
+                          </div>
+                        </label>
+                        {isSelected && (
+                          <button
+                            onClick={() => removeCustomActivity(activity.id)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                            aria-label="Supprimer"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -362,10 +413,16 @@ function Step2({
                     Uploader une photo
                   </button>
                   <button
+                    className={`p-2 text-left text-xs ${modalTab === 'arasaac' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
+                    onClick={() => setModalTab('arasaac')}
+                  >
+                    Pictogrammes ARASAAC
+                  </button>
+                  <button
                     className={`p-2 text-left text-xs ${modalTab === 'icons' ? 'border-b-2 border-[var(--kiwi-dark)] text-[var(--kiwi-dark)] font-medium' : 'text-gray-500'}`}
                     onClick={() => setModalTab('icons')}
                   >
-                    Choisir un pictogramme
+                    Emojis
                   </button>
                 </div>
 
@@ -447,6 +504,17 @@ function Step2({
                         </Button>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {modalTab === 'arasaac' && (
+                  <div className="space-y-4">
+                    <p className="text-sm">Recherchez un pictogramme par mot-clé:</p>
+                    <ArasaacSearch onSelectPictogram={handleArasaacSelection} />
+                    <div className="text-xs text-gray-600 mb-4">
+                      <p>ARASAAC propose une collection de pictogrammes utilisés dans la Communication Augmentative et Alternative (CAA) pour faciliter la communication des personnes ayant des difficultés dans ce domaine.</p>
+                    </div>
+                    <ArasaacAttribution />
                   </div>
                 )}
               </div>
