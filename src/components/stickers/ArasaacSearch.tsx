@@ -33,7 +33,7 @@ export function ArasaacSearch({ onSelectPictogram }: ArasaacSearchProps) {
         <input
           type="text"
           placeholder="Rechercher un pictogramme..."
-          className="flex-grow p-2 border rounded"
+          className="flex-grow p-2 border border-zinc-600 rounded"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           aria-label="Rechercher des pictogrammes ARASAAC"
@@ -82,6 +82,7 @@ export function ArasaacSearch({ onSelectPictogram }: ArasaacSearchProps) {
       
       {/* Attribution footer - always show once search has been performed */}
       {debouncedSearch.length > 0 && <ArasaacAttribution />}
+
     </div>
   )
 } 

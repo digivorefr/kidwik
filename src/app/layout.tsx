@@ -8,7 +8,7 @@ import { ReactQueryProvider } from '@/components/providers/ReactQueryProvider'
 
 // Polices Google
 const poppins = Poppins({
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-poppins',
@@ -83,7 +83,7 @@ export default function RootLayout({
       <body>
         <ReactQueryProvider>
           <Header />
-          <main className="flex min-h-screen flex-col items-center pb-20">
+          <main className="flex min-h-[calc(100dvh-4rem-6rem)] flex-col items-center z-10">
             {children}
           </main>
           <Footer />

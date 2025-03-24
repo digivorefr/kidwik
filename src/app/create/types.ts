@@ -42,6 +42,18 @@ export type TailwindColor =
   'teal' | 'cyan' | 'sky' | 'blue' | 'indigo' | 'violet' | 'purple' |
   'fuchsia' | 'pink' | 'rose' | 'slate' | 'gray' | 'zinc' | 'neutral' | 'stone'
 
+// Définir le type pour les groupes de couleurs
+export type ColorGroupName = 'Rouge/Orange/Jaune' | 'Vert' | 'Bleu' | 'Violet/Rose' | 'Gris';
+
+// Regrouper les couleurs
+export const colorGroups: Record<ColorGroupName, TailwindColor[]> = {
+  'Rouge/Orange/Jaune': ['red', 'orange', 'amber', 'yellow'],
+  'Vert': ['lime', 'green', 'emerald', 'teal'],
+  'Bleu': ['cyan', 'sky', 'blue', 'indigo'],
+  'Violet/Rose': ['violet', 'purple', 'fuchsia', 'pink', 'rose'],
+  'Gris': ['slate', 'gray', 'zinc', 'neutral', 'stone'],
+};
+
 // Define the PreviewMode type for consistent use across the application
 export type PreviewMode = 'calendar' | 'stickers' | 'all'
 

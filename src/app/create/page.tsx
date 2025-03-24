@@ -13,15 +13,13 @@ import { ProcessedImageEvent } from '@/components/create-form/types'
 
 // Import the extracted components
 import { getThemeClasses } from '@/components/calendar/types'
-import {
-  Step1,
-  Step2,
-  Step3,
-  PreviewSection,
-  AccordionStep
-} from '@/components/create-form'
+import PreviewSection from '@/components/create-form/PreviewSection'
 import useCalendarStore from '@/lib/store/calendar-store'
-import { Button } from '@/components/ui/Button'
+import { ChipButton } from '@/components/ui/Button'
+import { AnimatePresence } from 'motion/react'
+import CalendarToolbar from '@/components/ui/toolbar/CalendarToolbar'
+import StickerToolbar from '@/components/ui/toolbar/StickerToolbar'
+import FinalToolbar from '@/components/ui/toolbar/FinalToolbar'
 
 // Loading component to show while suspended
 function CalendarEditorLoading() {
@@ -43,7 +41,6 @@ function CreateCalendarContent() {
   const searchParams = useSearchParams()
   const calendarId = searchParams.get('id')
 
-  const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<CalendarFormData>(DEFAULT_FORM_DATA)
   const [childPhoto, setChildPhoto] = useState<string | null>(null)
   const [calendarName, setCalendarName] = useState<string>('Mon calendrier')
@@ -117,34 +114,12 @@ function CreateCalendarContent() {
     return () => clearTimeout(saveCalendarDebounced);
   }, [formData, childPhoto, calendarId, calendarName, isLoading, saveCurrentCalendar]);
 
-  // Synchroniser le mode de prévisualisation avec l'étape actuelle
-  // mais seulement si le mode n'a pas été manuellement changé par l'utilisateur
-  useEffect(() => {
-    // Ne pas synchroniser si l'utilisateur a modifié manuellement le mode de prévisualisation
-    if (userModifiedPreviewMode.current) return;
-
-    // Déterminer le mode de prévisualisation en fonction de l'étape actuelle
-    let newPreviewMode: PreviewMode;
-    if (currentStep === 2) {
-      newPreviewMode = 'stickers';
-    } else if (currentStep === 3) {
-      newPreviewMode = 'all';
-    } else {
-      newPreviewMode = 'calendar';
-    }
-
-    // Mettre à jour le mode de prévisualisation si nécessaire
-    if (formData.options.previewMode !== newPreviewMode) {
-      updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
-    }
-    }, [currentStep, formData.options, updateFormField, userModifiedPreviewMode]);
-
-  const totalSteps = 3
 
   // Available icons for custom activities
   const availableIcons = [
-    '📌', '⭐', '🌟', '🎯', '🎨', '🎭', '🎬', '🎮', '🎷', '🎸', '🎹', '🎺',
-    '🎻', '🏀', '⚽', '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '⛳', '🏓', '🏸',
+    '🏫', '🍽️', '🛁','🛏️','🪥','👕','⚽','📚','📖','📺','🎮','👩','👨','👴','👵',
+    '📌', '⭐', '🌟', '🎯', '🎨', '🎭', '🎬', '🎷', '🎸', '🎹', '🎺',
+    '🎻', '🏀', '🏈', '⚾', '🎾', '🏐', '🏉', '🎱', '⛳', '🏓', '🏸',
     '🚲', '🛹', '🛼', '⛸️', '🥏', '🎣', '🎲', '🧩', '🧸', '🪁', '🎈', '🎁'
   ]
 
@@ -236,105 +211,11 @@ function CreateCalendarContent() {
     reader.readAsDataURL(file)
   }
 
-  const handleBackgroundImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        updateFormField('backgroundImage', event.target.result as string)
-      }
-    }
-    reader.readAsDataURL(file)
-  }
 
   const removeBackgroundImage = () => {
     updateFormField('backgroundImage', null)
   }
 
-  const handleSave = async () => {
-    if (calendarId) {
-      try {
-        // Référence à l'élément de prévisualisation pour générer une miniature
-        const previewElement = document.querySelector('.calendar-preview-container') as HTMLElement
-
-        await saveCurrentCalendar(calendarId, formData, childPhoto, previewElement, calendarName)
-        alert('Calendrier sauvegardé avec succès!')
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde:', error)
-        alert('Erreur lors de la sauvegarde du calendrier')
-      }
-    }
-  }
-
-
-  // Navigation handlers
-  const goToNextStep = () => {
-    const nextStep = Math.min(currentStep + 1, totalSteps)
-
-    // Si l'étape ne change pas, ne rien faire
-    if (nextStep === currentStep) return
-
-    // Défiler vers le haut avant de changer d'étape
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-
-    // Attendre que le défilement soit terminé avant de mettre à jour l'étape
-    setTimeout(() => {
-      setCurrentStep(nextStep)
-
-      // Define preview mode based on step
-      let newPreviewMode: PreviewMode;
-
-      if (nextStep === 2) {
-        newPreviewMode = 'stickers';
-      } else if (nextStep === 3) {
-        newPreviewMode = 'all';
-      } else {
-        newPreviewMode = 'calendar';
-      }
-
-      if (formData.options.previewMode !== newPreviewMode) {
-        updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
-      }
-    }, 600); // Délai similaire à celui dans AccordionStep
-  }
-
-  const goToPrevStep = () => {
-    const prevStep = Math.max(currentStep - 1, 1)
-
-    // Si l'étape ne change pas, ne rien faire
-    if (prevStep === currentStep) return
-
-    // Défiler vers le haut avant de changer d'étape
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-
-    // Attendre que le défilement soit terminé avant de mettre à jour l'étape
-    setTimeout(() => {
-      setCurrentStep(prevStep)
-
-      // Define preview mode based on step
-      let newPreviewMode: PreviewMode;
-
-      if (prevStep === 2) {
-        newPreviewMode = 'stickers';
-      } else if (prevStep === 3) {
-        newPreviewMode = 'all';
-      } else {
-        newPreviewMode = 'calendar';
-      }
-
-      if (formData.options.previewMode !== newPreviewMode) {
-        updateFormField('options', { ...formData.options, previewMode: newPreviewMode });
-      }
-    }, 600); // Délai similaire à celui dans AccordionStep
-  }
 
   // Fonction pour changer manuellement le mode de prévisualisation
   const handlePreviewModeChange = (mode: PreviewMode) => {
@@ -346,6 +227,42 @@ function CreateCalendarContent() {
     setTimeout(() => {
       userModifiedPreviewMode.current = false;
     }, 3000); // Réinitialise après 3 secondes d'inactivité
+  }
+
+  // Handler for changing objectFit property on an activity
+  const handleObjectFitToggle = (activityId: string, objectFit: 'cover' | 'contain') => {
+    // Update the customActivities array with the new objectFit value
+    const updatedCustomActivities = formData.customActivities.map(activity => 
+      activity.id === activityId 
+        ? { ...activity, objectFit } 
+        : activity
+    );
+    
+    // Update the selectedActivities array as well to keep them in sync
+    const updatedSelectedActivities = formData.selectedActivities.map(activity => 
+      activity.id === activityId 
+        ? { ...activity, objectFit } 
+        : activity
+    );
+    
+    // Update both arrays in the form state
+    updateFormField('customActivities', updatedCustomActivities);
+    updateFormField('selectedActivities', updatedSelectedActivities);
+  };
+
+
+  // Toggle handler to update both local state and form data
+  const handleToggleView = (view: PreviewMode) => {
+    // Notifier le composant parent si onPreviewModeChange est fourni
+    if (handlePreviewModeChange) {
+      handlePreviewModeChange(view);
+    } else {
+      // Comportement par défaut si onPreviewModeChange n'est pas fourni
+      updateFormField('options', {
+        ...formData.options,
+        previewMode: view
+      })
+    }
   }
 
   // Days of the week in French
@@ -372,101 +289,97 @@ function CreateCalendarContent() {
   return (
     <>
       {/* Main content */}
-      <main className="flex-grow container mx-auto py-8">
-        <FadeIn>
-          <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-[var(--kiwi-darker)] mb-2">
-                {calendarName}
-              </h1>
-              <p className="text-lg">
-                Personnalisez votre calendrier hebdomadaire pour enfants en quelques étapes simples.
-              </p>
-            </div>
-
-            <div className="mt-4 md:mt-0 flex gap-2">
-              <Button
-                onClick={handleSave}
-                variant="outline"
-                size="sm"
-              >
-                Sauvegarder
-              </Button>
-            </div>
-          </div>
+      <main className="relative flex-auto self-stretch flex flex-col">
+        <FadeIn className='flex-none container py-4 mx-auto text-center'>
+          <h1 className="text-2xl text-[var(--kiwi-darker)]">
+            {calendarName}
+          </h1>
         </FadeIn>
 
-
-        <div className="grid xl:flex gap-8">
-          {/* Left side: Form Steps */}
-          <div className='flex-none xl:w-md'>
-            {/* Step 1: Calendar Customization */}
-            <AccordionStep
-              step={1}
-              currentStep={currentStep}
-              title="1. Personnalisation du calendrier"
-              onStepChange={setCurrentStep}
-            >
-              <Step1
-                formData={formData}
-                updateFormField={updateFormField}
-                onNextStep={goToNextStep}
-                themeClasses={themeClasses}
-                handleBackgroundImageUpload={handleBackgroundImageUpload}
-                removeBackgroundImage={removeBackgroundImage}
-              />
-            </AccordionStep>
-
-            {/* Step 2: Photo and Activities */}
-            <AccordionStep
-              step={2}
-              currentStep={currentStep}
-              title="2. Photo et activités"
-              onStepChange={setCurrentStep}
-            >
-              <Step2
-                formData={formData}
-                updateFormField={updateFormField}
-                childPhoto={childPhoto}
-                handlePhotoUpload={handlePhotoUpload}
-                handleActivityToggle={handleActivityToggle}
-                updateStickerQuantity={updateStickerQuantity}
-                removeCustomActivity={removeCustomActivity}
-                availableIcons={availableIcons}
-                themeClasses={themeClasses}
-                onNextStep={goToNextStep}
-                onPrevStep={goToPrevStep}
-              />
-            </AccordionStep>
-
-            {/* Step 3: Final Preview and Download */}
-            <AccordionStep
-              step={3}
-              currentStep={currentStep}
-              title="3. Aperçu final et téléchargement"
-              onStepChange={setCurrentStep}
-            >
-              <Step3
-                formData={formData}
-                updateFormField={updateFormField}
-                handleSave={handleSave}
-                themeClasses={themeClasses}
-                onNextStep={goToNextStep}
-                onPrevStep={goToPrevStep}
-              />
-            </AccordionStep>
+        <div className='relative flex-auto flex flex-col bg-zinc-200'>
+          {/* Header with title and toggle buttons */}
+          <div className="flex justify-center mt-6 sticky top-[4.5rem] z-30">
+            {/* Toggle buttons for preview modes */}
+            <div className="flex gap-1 rounded-full bg-zinc-200 self-center sm:self-auto shadow-md">
+              <ChipButton
+                isActive={formData.options.previewMode === 'calendar'}
+                onClick={() => handleToggleView('calendar')}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+                  formData.options.previewMode === 'calendar'
+                    ? 'bg-white text-[var(--kiwi-darker)]'
+                    : 'text-white'
+                }`}
+                data-preview-mode-toggle="calendar"
+              >
+                <span className="material-symbols-rounded">palette</span>
+                <span className="hidden md:block md:ml-1">Apparence</span>
+              </ChipButton>
+              <ChipButton
+                isActive={formData.options.previewMode === 'stickers'}
+                onClick={() => handleToggleView('stickers')}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+                  formData.options.previewMode === 'stickers'
+                    ? 'bg-white text-[var(--kiwi-darker)]'
+                    : 'text-white'
+                }`}
+                data-preview-mode-toggle="stickers"
+              >
+                <span className="material-symbols-rounded">apps</span>
+                <span className="hidden md:block md:ml-1">Gommettes</span>
+              </ChipButton>
+              <ChipButton
+                isActive={formData.options.previewMode === 'all'}
+                onClick={() => handleToggleView('all')}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+                  formData.options.previewMode === 'all'
+                    ? 'bg-white text-[var(--kiwi-darker)]'
+                    : 'text-white'
+                }`}
+                data-preview-mode-toggle="all"
+              >
+                <span className="material-symbols-rounded">export_notes</span>
+                <span className="hidden md:block md:ml-1">Exportation</span>
+              </ChipButton>
+            </div>
           </div>
-
-          {/* Right side: Preview */}
-          <div className="relative flex-auto xl:sticky xl:top-8 xl:self-start">
-            <PreviewSection
-              formData={formData}
-              updateFormField={updateFormField}
-              childPhoto={childPhoto}
-              themeClasses={themeClasses}
-              weekDays={weekDays}
-              onPreviewModeChange={handlePreviewModeChange}
-            />
+          <PreviewSection
+            formData={formData}
+            childPhoto={childPhoto}
+            themeClasses={themeClasses}
+            weekDays={weekDays}
+          />
+          <div className="flex-none sticky bottom-4 mb-4 flex justify-center z-30">
+            <AnimatePresence mode="wait">
+              {formData.options.previewMode === 'calendar' && (
+                <CalendarToolbar
+                  key="calendar"
+                  formData={formData}
+                  updateFormField={updateFormField}
+                  removeBackgroundImage={removeBackgroundImage}
+                />
+              )}
+              {formData.options.previewMode === 'stickers' && (
+                <StickerToolbar
+                  key="stickers"
+                  formData={formData}
+                  updateFormField={updateFormField}
+                  childPhoto={childPhoto}
+                  handlePhotoUpload={handlePhotoUpload}
+                  updateStickerQuantity={updateStickerQuantity}
+                  themeClasses={themeClasses}
+                  handleObjectFitToggle={handleObjectFitToggle}
+                  availableIcons={availableIcons}
+                  handleActivityToggle={handleActivityToggle}
+                  removeCustomActivity={removeCustomActivity}
+                />
+              )}
+              {formData.options.previewMode === 'all' && (
+                <FinalToolbar
+                  key="final"
+                  calendarId={calendarId ?? undefined}
+                />
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </main>

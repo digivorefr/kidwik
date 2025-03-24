@@ -24,7 +24,7 @@ function Header() {
   }
 
   return (
-    <header className="bg-white shadow-xl shadow-black/4 py-4 sticky top-0 z-10">
+    <header className="bg-white shadow-xl shadow-black/4 py-4 sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
         <Link
           href="/"
