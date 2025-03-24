@@ -18,7 +18,7 @@ export default function ImageStickerPreview({
     <div className={cn(
       'child-sticker-preview relative',
       themeClasses.stickerBg,
-      'w-[2cm] h-[2cm] rounded-full overflow-hidden border-[0.5cqi]',
+      'w-[2cm] h-[2cm] rounded-full overflow-hidden border-[0.25cqi]',
       themeClasses.stickerBorder,
       objectFit === 'contain' && 'p-[0.8cqi]'
     )}>

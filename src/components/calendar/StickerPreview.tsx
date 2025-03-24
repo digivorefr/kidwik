@@ -73,7 +73,7 @@ export default function StickerPreview({
     <div className={cn(
       'sticker-preview',
       themeClasses.stickerBg,
-      'w-[2cm] h-[2cm] rounded-full flex items-center justify-center border-4 @container',
+      'w-[2cm] h-[2cm] rounded-full flex items-center justify-center border-[0.25cqi] @container',
       themeClasses.stickerBorder
     )}>
       <span className="text-[60cqw]">{activity.icon}</span>
