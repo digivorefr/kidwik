@@ -5,6 +5,10 @@ export interface Activity {
   name: string
   icon?: string
   isPreset?: boolean
+  isArasaac?: boolean
+  originalId?: number
+  attribution?: string
+  objectFit?: 'cover' | 'contain'
 }
 
 export interface CalendarDay {
