@@ -23,9 +23,6 @@ export function PictogramItem({ id, onSelect }: PictogramItemProps) {
       </div>
     )
   }
-
-  console.log('pictogram', pictogram);
-  console.log('error', error);
   
   if (error || !pictogram) {
     return (
@@ -45,7 +42,7 @@ export function PictogramItem({ id, onSelect }: PictogramItemProps) {
   return (
     <button
       onClick={() => onSelect({
-        id: `arasaac-${id}`,
+        id: `arasaac-${id}-${Date.now()}`,
         name,
         icon: imageUrl,
         isPreset: false,
