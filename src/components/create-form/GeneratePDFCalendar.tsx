@@ -1,11 +1,7 @@
-'use client';
+import { useState } from "react";
+import { Button } from "../ui/Button";
 
-import { useState } from 'react'
-import { FadeIn } from '@/components/ui/motion'
-import { Step3Props } from './types'
-import { Button } from '@/components/ui/Button'
-
-function Step3({ handleSave }: Step3Props) {
+export default function GeneratePDFCalendar() {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
@@ -105,57 +101,32 @@ function Step3({ handleSave }: Step3Props) {
   }
 
   return (
-    <FadeIn>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex flex-col space-y-4">
-
-          <h2 className="text-xl font-semibold">Votre calendrier est prêt à être téléchargé !</h2>
-
-          <p className="mb-2">
-            Vous allez pouvoir télécharger votre calendrier personnalisé ainsi que la planche de gommettes en format PDF.
-          </p>
-
-          <p className="mb-2">
-            Après impression, découpez les gommettes en suivant les bordures et placez-les sur le calendrier selon vos besoins.
-          </p>
-
-          {errorMessage && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800">
-              <p><strong>Erreur:</strong> {errorMessage}</p>
-            </div>
-          )}
-
-          <div className="flex flex-col space-y-4 mt-4">
-            <Button
-              onClick={generatePDF}
-              disabled={isGeneratingPDF}
-              isLoading={isGeneratingPDF}
-              variant="primary"
-              size="lg"
-              fullWidth
-              leftIcon={!isGeneratingPDF ? <span>📥</span> : undefined}
-            >
-              {isGeneratingPDF
-                ? "Génération du PDF en cours..."
-                : "Télécharger mon calendrier et mes gommettes"
-              }
-            </Button>
-
-            <Button
-              onClick={handleSave}
-              disabled={isGeneratingPDF}
-              variant="outline"
-              size="lg"
-              fullWidth
-              leftIcon={<span>💾</span>}
-            >
-              Sauvegarder mon calendrier
-            </Button>
-          </div>
+    <div className="grid gap-3 text-center">
+      <p className="text-sm text-balance">
+        Pour imprimer votre calendrier, veuillez télécharger le fichier PDF.
+      </p>
+      {errorMessage && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-800">
+          <p><strong>Erreur:</strong> {errorMessage}</p>
         </div>
+      )}
+
+      <div className="flex flex-col space-y-4 mt-4">
+        <Button
+          onClick={generatePDF}
+          disabled={isGeneratingPDF}
+          isLoading={isGeneratingPDF}
+          variant="secondary"
+          // size="lg"
+          fullWidth
+          leftIcon={!isGeneratingPDF ? <span className="material-symbols-rounded">download</span> : undefined}
+        >
+          {isGeneratingPDF
+            ? "Génération du PDF en cours..."
+            : "Télécharger mon calendrier kidwik"
+          }
+        </Button>
       </div>
-    </FadeIn>
+    </div>
   )
 }
-
-export default Step3

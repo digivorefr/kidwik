@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 function Footer() {
   return (
-    <footer className="bg-white shadow-2xl text-gray-500 py-6">
+    <footer className="relative bg-white shadow-2xl text-gray-500 py-6 z-50">
       <div className="container mx-auto">
         <div className="mb-2">
           <p>© {new Date().getFullYear()} kidwik - Tous droits réservés</p>

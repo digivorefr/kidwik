@@ -46,7 +46,7 @@ export default function StickerPreview({
               const newObjectFit = objectFit === 'cover' ? 'contain' : 'cover';
               onObjectFitToggle(activity.id, newObjectFit);
             }}
-            className="absolute cursor-pointer bottom-0 right-0 bg-white/80 hover:bg-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-sm border border-gray-200"
+            className="absolute cursor-pointer bottom-0 right-0 bg-zinc-200 hover:bg-zinc-50 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-sm border border-zinc-100 text-zinc-900"
             title={objectFit === 'cover' ? 'Changer en mode ajusté' : 'Changer en mode remplissage'}
           >
             {objectFit === 'cover' ? (
@@ -73,10 +73,17 @@ export default function StickerPreview({
     <div className={cn(
       'sticker-preview',
       themeClasses.stickerBg,
-      'w-[2cm] h-[2cm] rounded-full flex items-center justify-center border-[0.25cqi] @container',
+      'w-[2cm] h-[2cm] text-centerflex items-center justify-center @container',
       themeClasses.stickerBorder
     )}>
-      <span className="text-[60cqw]">{activity.icon}</span>
+      <div className={cn(
+        'flex-auto',
+        'rounded-[6cqi] border-[6cqi]',
+        themeClasses.stickerBg,
+        themeClasses.stickerBorder,
+      )}>
+        <div className="text-[60cqw] text-center">{activity.icon}</div>
+      </div>
     </div>
   )
 }

@@ -153,7 +153,7 @@ export default function DayMomentManager({ moments, onChange }: DayMomentManager
     <div className="space-y-4">
       <h4 className="text-sm font-medium">Personnaliser les moments de la journée</h4>
 
-      <div className="rounded-md p-4 bg-gray-50 space-y-4 touch-none">
+      <div className="space-y-4 touch-none">
         <Reorder.Group
           axis="y"
           values={items}
@@ -173,11 +173,12 @@ export default function DayMomentManager({ moments, onChange }: DayMomentManager
         </Reorder.Group>
         <Button
           onClick={addMoment}
-          variant="text"
+          variant="color"
           size="sm"
-          className="text-xs w-full"
+          className="text-xs w-full flex items-center gap-1"
         >
-          Ajouter un moment
+          <span className="material-symbols-rounded">add</span>
+          <span>Ajouter un moment</span>
         </Button>
       </div>
     </div>

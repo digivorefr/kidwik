@@ -1,3 +1,4 @@
+@import './global-icons.css';
 @import 'tailwindcss';
 
 @theme inline {
@@ -29,6 +30,13 @@
     @apply px-4 md:px-0;
   }
 
+  .toolbar-height-container {
+    @apply max-h-[max(16rem,40dvh)] overflow-y-auto pr-4;
+  }
+
+  .a4{
+    @apply relative w-full max-w-[100vh] mx-auto h-auto aspect-[297/210] bg-white;
+  }
 }
 
 body {

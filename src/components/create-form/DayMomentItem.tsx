@@ -62,7 +62,7 @@ export default function DayMomentItem({
       dragListener={false}
       dragControls={controls}
     >
-      <div className="bg-white rounded-md border border-gray-200 p-3 flex items-center gap-3 relative touch-none">
+      <div className="bg-zinc-800 rounded-md border border-zinc-500 p-3 flex items-center gap-2 relative touch-none">
         {/* Drag handle */}
         <button
           key={`${item.id}-drag-handle`}
@@ -96,7 +96,7 @@ export default function DayMomentItem({
         ) : (
           <button
             onClick={startEditingLabel}
-            className="text-2xl focus:outline-none hover:bg-gray-100 p-1 rounded"
+            className="text-xl focus:outline-none hover:bg-zinc-900 p-1 rounded"
           >
             {item.label}
           </button>
@@ -132,7 +132,7 @@ export default function DayMomentItem({
             ) : (
               <button
                 onClick={startEditingPercentage}
-                className="text-sm text-gray-600 w-12 text-right hover:bg-gray-100 rounded px-1"
+                className="text-sm w-12 text-right hover:bg-zinc-900 rounded px-1"
               >
                 {item.dayPercentage}%
               </button>
@@ -144,7 +144,7 @@ export default function DayMomentItem({
         <button
           onClick={() => onRemove(item.id)}
           className={cn(
-            "p-1 rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500 transition-colors",
+            "p-1 rounded-full hover:bg-zinc-900 text-zinc-400 hover:text-red-500 transition-colors",
             disabled && "opacity-50 cursor-not-allowed"
           )}
           disabled={disabled}

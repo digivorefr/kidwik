@@ -42,6 +42,18 @@ export type TailwindColor =
   'teal' | 'cyan' | 'sky' | 'blue' | 'indigo' | 'violet' | 'purple' |
   'fuchsia' | 'pink' | 'rose' | 'slate' | 'gray' | 'zinc' | 'neutral' | 'stone'
 
+// Définir le type pour les groupes de couleurs
+export type ColorGroupName = 'Rouge/Orange/Jaune' | 'Vert' | 'Bleu' | 'Violet/Rose' | 'Gris';
+
+// Regrouper les couleurs
+export const colorGroups: Record<ColorGroupName, TailwindColor[]> = {
+  'Rouge/Orange/Jaune': ['red', 'orange', 'amber', 'yellow'],
+  'Vert': ['lime', 'green', 'emerald', 'teal'],
+  'Bleu': ['cyan', 'sky', 'blue', 'indigo'],
+  'Violet/Rose': ['violet', 'purple', 'fuchsia', 'pink', 'rose'],
+  'Gris': ['slate', 'gray', 'zinc', 'neutral', 'stone'],
+};
+
 // Define the PreviewMode type for consistent use across the application
 export type PreviewMode = 'calendar' | 'stickers' | 'all'
 
@@ -78,21 +90,3 @@ export const DEFAULT_FORM_DATA: CalendarFormData = {
     previewMode: 'calendar'
   }
 }
-
-export const PRESET_ACTIVITIES: Activity[] = [
-  { id: 'school', name: 'École', icon: '🏫', isPreset: true },
-  { id: 'lunch', name: 'Repas', icon: '🍽️', isPreset: true },
-  { id: 'bath', name: 'Bain/Douche', icon: '🛁', isPreset: true },
-  { id: 'sleep', name: 'Repos', icon: '🛏️', isPreset: true },
-  { id: 'teeth', name: 'Brossage de dents', icon: '🪥', isPreset: true },
-  { id: 'dressing', name: 'Habillage', icon: '👕', isPreset: true },
-  { id: 'sports', name: 'Sport', icon: '⚽', isPreset: true },
-  { id: 'homework', name: 'Devoirs', icon: '📚', isPreset: true },
-  { id: 'reading', name: 'Lecture', icon: '📖', isPreset: true },
-  { id: 'tv', name: 'Télévision', icon: '📺', isPreset: true },
-  { id: 'video-game', name: 'Jeux vidéo', icon: '🎮', isPreset: true },
-  { id: 'mom', name: 'Maman', icon: '👩', isPreset: true },
-  { id: 'dad', name: 'Papa', icon: '👨', isPreset: true },
-  { id: 'grandpa', name: 'Grand-père', icon: '👴', isPreset: true },
-  { id: 'grandma', name: 'Grand-mère', icon: '👵', isPreset: true },
-]

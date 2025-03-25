@@ -52,6 +52,7 @@ export default function StickerSheet({
             <ImageStickerPreview 
               image={childPhoto}
               themeClasses={themeClasses}
+              isHeroImage={true}
             />
           </div>
         );
@@ -67,7 +68,7 @@ export default function StickerSheet({
   }, [selectedActivities, childPhoto, stickerQuantities, themeClasses]);
   
   return (
-    <div className="w-full h-auto aspect-[297/210] paper-shadow">
+    <div className="a4 paper-shadow">
       <div id="stickers-preview">
         {stickers.map((chunk, index) => (
           <div 

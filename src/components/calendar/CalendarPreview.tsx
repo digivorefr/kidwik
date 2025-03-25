@@ -24,7 +24,7 @@ export default function CalendarPreview({
 
   return (
     <div
-    className="relative w-full h-auto aspect-[297/210] paper-shadow border-[2cqw] border-white @container"
+    className="a4 paper-shadow border-[2cqw] border-white @container"
     >
       <div
         id="calendar-preview"
