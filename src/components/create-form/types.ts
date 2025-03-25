@@ -14,8 +14,6 @@ export interface ProcessedImageEvent {
 export interface FormStepProps {
   formData: CalendarFormData;
   updateFormField: (field: keyof CalendarFormData, value: unknown) => void;
-  onNextStep?: () => void;
-  onPrevStep?: () => void;
   themeClasses?: ThemeClasses;
   handleBackgroundImageUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   removeBackgroundImage?: () => void;
