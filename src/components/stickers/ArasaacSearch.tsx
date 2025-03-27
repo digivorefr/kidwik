@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect  } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { searchPictograms } from '@/lib/api/arasaac'
 import { useDebounce } from '@/lib/hooks/useDebounce'
@@ -15,6 +15,7 @@ interface ArasaacSearchProps {
 export function ArasaacSearch({ onSelectPictogram }: ArasaacSearchProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const debouncedSearch = useDebounce(searchTerm, 500)
+  const inputRef = useRef<HTMLInputElement>(null)
   
   // Query for pictogram IDs
   const { data: pictogramIds = [], isLoading, error, isFetching } = useQuery({
@@ -26,11 +27,18 @@ export function ArasaacSearch({ onSelectPictogram }: ArasaacSearchProps) {
   
   // Limit to first 20 results to avoid overwhelming the API
   const visiblePictograms = pictogramIds.slice(0, 20)
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [])
   
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         <input
+          ref={inputRef}
           type="text"
           placeholder="Rechercher un pictogramme..."
           className="flex-grow p-2 border border-zinc-600 rounded"
