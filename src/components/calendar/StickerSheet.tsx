@@ -69,6 +69,24 @@ export default function StickerSheet({
   
   return (
     <div className="a4 paper-shadow">
+      {stickers.length === 0 && (
+        <div
+          className={cn(
+            'sticker-sheet w-full min-h-full bg-white p-6 min-w-fit flex flex-col gap-13 m-0',
+          )}
+        >
+          <div className={`${themeClasses.headerBg} flex-none rounded-lg p-3 text-center`}>
+            <h3 className="text-xl text-white m-0">
+              {`Mes Gommettes à Découper`}
+            </h3>
+          </div>
+          <div className="flex-auto flex flex-col items-center justify-center text-center">
+            <span className="text-sm text-zinc-500">
+              Ajoutez des activités pour remplir cette page blanche
+            </span>
+          </div>
+        </div>
+      )}
       <div id="stickers-preview">
         {stickers.map((chunk, index) => (
           <div 
