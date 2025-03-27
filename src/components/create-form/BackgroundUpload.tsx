@@ -74,7 +74,7 @@ export default function BackgroundUpload({
             <p className="mt-2 text-sm font-medium">
               {isUploading ? "Chargement..." : "Cliquez pour choisir une image"}
             </p>
-            <p className="mt-1 text-xs text-zinc-300">PNG, JPG, WebP (max. 5 Mo)</p>
+            <p className="mt-1 text-xs text-zinc-300">PNG, JPG, WebP (max. 20 Mo)</p>
           </div>
           <input type="file" className="hidden" accept="image/*" onChange={handleBackgroundUpload} />
         </label>
