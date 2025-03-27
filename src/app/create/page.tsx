@@ -300,45 +300,45 @@ function CreateCalendarContent() {
           {/* Header with title and toggle buttons */}
           <div className="flex justify-center mt-6 sticky top-[4.5rem] z-30">
             {/* Toggle buttons for preview modes */}
-            <div className="flex gap-1 rounded-full bg-zinc-200 self-center sm:self-auto shadow-md">
+            <div className="flex sm:gap-1 rounded-full bg-zinc-200 self-center sm:self-auto shadow-md">
               <ChipButton
                 isActive={formData.options.previewMode === 'calendar'}
                 onClick={() => handleToggleView('calendar')}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+                className={`!px-2 !py-1 sm:!px-3 rounded-full font-medium transition-colors duration-200 ${
                   formData.options.previewMode === 'calendar'
                     ? 'bg-white text-[var(--kiwi-darker)]'
                     : 'text-white'
                 }`}
                 data-preview-mode-toggle="calendar"
               >
-                <span className="material-symbols-rounded">palette</span>
-                <span className="hidden md:block md:ml-1">Apparence</span>
+                <span className="!text-[18px] sm:!text-[24px] material-symbols-rounded">palette</span>
+                <span className="text-[0.75em] sm:text-xs ml-1 font-medium">Apparence</span>
               </ChipButton>
               <ChipButton
                 isActive={formData.options.previewMode === 'stickers'}
                 onClick={() => handleToggleView('stickers')}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+                className={`!px-2 !py-1 sm:!px-3 rounded-full text-xs font-medium transition-colors duration-200 ${
                   formData.options.previewMode === 'stickers'
                     ? 'bg-white text-[var(--kiwi-darker)]'
                     : 'text-white'
                 }`}
                 data-preview-mode-toggle="stickers"
               >
-                <span className="material-symbols-rounded">apps</span>
-                <span className="hidden md:block md:ml-1">Gommettes</span>
+                <span className="!text-[18px] sm:!text-[24px] material-symbols-rounded">apps</span>
+                <span className="text-[0.75em] sm:text-xs ml-1 font-medium">Gommettes</span>
               </ChipButton>
               <ChipButton
                 isActive={formData.options.previewMode === 'all'}
                 onClick={() => handleToggleView('all')}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200 ${
+                className={`!px-2 !py-1 sm:!px-3 rounded-full text-xs font-medium transition-colors duration-200 ${
                   formData.options.previewMode === 'all'
                     ? 'bg-white text-[var(--kiwi-darker)]'
                     : 'text-white'
                 }`}
                 data-preview-mode-toggle="all"
               >
-                <span className="material-symbols-rounded">export_notes</span>
-                <span className="hidden md:block md:ml-1">Exportation</span>
+                <span className="!text-[18px] sm:!text-[24px] material-symbols-rounded">export_notes</span>
+                <span className="text-[0.75em] sm:text-xs ml-1 font-medium">Exportation</span>
               </ChipButton>
             </div>
           </div>
