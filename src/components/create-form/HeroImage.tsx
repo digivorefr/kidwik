@@ -86,7 +86,7 @@ export default function HeroImage({
             {childPhoto ? 'Changer la photo' : 'Ajouter une photo'}
           </div>
           <p className="text-xs text-zinc-500 mt-1">
-            JPG, PNG (max. 5 Mo)
+            JPG, PNG (max. 20 Mo)
           </p>
         </div>
         <input

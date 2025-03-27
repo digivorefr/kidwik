@@ -4,7 +4,7 @@
  */
 
 // Constants for image processing
-const MAX_IMAGE_SIZE_MB = 5
+const MAX_IMAGE_SIZE_MB = 20
 const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
 
 // Presets for different image types
@@ -16,9 +16,9 @@ export const IMAGE_PRESETS = {
     name: 'background'
   },
   STICKER: {
-    maxWidth: 600,
-    maxHeight: 600,
-    quality: 0.85,
+    maxWidth: 800,
+    maxHeight: 800,
+    quality: 0.9,
     name: 'sticker'
   },
   CHILD_PHOTO: {
