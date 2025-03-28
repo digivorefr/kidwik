@@ -117,10 +117,20 @@ export async function processImage(
           let width = img.width
           let height = img.height
 
-          if (width > maxWidth || height > maxHeight) {
-            const ratio = Math.min(maxWidth / width, maxHeight / height)
-            width = Math.floor(width * ratio)
-            height = Math.floor(height * ratio)
+          // Use target dimensions as minimums (at least one dimension will match preset)
+          // If image is wider than tall, set height to target and adjust width proportionally
+          // If image is taller than wide, set width to target and adjust height proportionally
+          const imageRatio = width / height
+          const targetRatio = maxWidth / maxHeight
+          
+          if (imageRatio >= targetRatio) {
+            // Image is wider or same aspect ratio - use height as reference
+            height = maxHeight
+            width = Math.floor(height * imageRatio)
+          } else {
+            // Image is taller - use width as reference
+            width = maxWidth
+            height = Math.floor(width / imageRatio)
           }
 
           // Create a canvas for resizing and compression

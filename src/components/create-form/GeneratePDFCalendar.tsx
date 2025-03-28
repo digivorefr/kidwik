@@ -67,13 +67,15 @@ export default function GeneratePDFCalendar() {
       // Configure html2pdf avec des options plus robustes
       const opt = {
         margin: 4,
-        filename: 'calendrier-et-gommettes.pdf',
-        image: { type: 'jpeg', quality: 0.85 },
+        filename: 'kidwik-calendrier.pdf',
+        image: { type: 'jpeg', quality: 0.95 },
         html2canvas: {
-          scale: 4.16666667,
+          scale: 6,
           useCORS: true,
           logging: true,
           backgroundColor: '#ffffff',
+          imageTimeout: 10000,
+          letterRendering: true,
         },
         jsPDF: {
           unit: 'mm' as const,
