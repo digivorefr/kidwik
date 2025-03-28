@@ -56,13 +56,21 @@ export async function getPictogramDetails(id: number): Promise<Pictogram | null>
 /**
  * Get the URL for a pictogram image
  * @param id The pictogram ID
+ * @param options Options for the pictogram image
  * @returns Full URL to the pictogram image
  */
 export function getPictogramImageUrl(id: number, options: {
   download?: boolean,
   plural?: boolean,
-  color?: boolean
+  color?: boolean,
+  resolution?: number
 } = {}): string {
-  const { download = false, plural = false, color = true } = options
-  return `https://api.arasaac.org/api/pictograms/${id}?download=${download}&plural=${plural}&color=${color}`
+  const { 
+    download = false, 
+    plural = false, 
+    color = true, 
+    resolution = 2500  // Higher resolution (500px is the default)
+  } = options
+  
+  return `https://api.arasaac.org/api/pictograms/${id}?download=${download}&plural=${plural}&color=${color}&resolution=${resolution}`
 } 

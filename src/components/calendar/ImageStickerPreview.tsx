@@ -32,16 +32,21 @@ export default function ImageStickerPreview({
         >
         <div
           className={cn(
-            "flex-auto",
+            "relative flex-auto",
             objectFit === 'contain' && 'm-[12cqi]',
           )}
-          style={{ 
-            backgroundImage: `url(${image})`,
-            backgroundSize: objectFit,
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        />
+        >
+          <Image 
+            src={image}
+            alt="Sticker"
+            fill
+            className="object-center"
+            style={{ objectFit }}
+            sizes="2cm"
+            unoptimized={image.startsWith('data:') || image.includes('api.arasaac.org')}
+            priority={isHeroImage}
+          />
+        </div>
       </div>
       {isHeroImage && (
         <Image
