@@ -11,7 +11,8 @@ export default function GeneratePDFCalendar() {
 
     try {
       // Dynamically import html2pdf only when needed (client-side only)
-      const html2pdf = (await import('@digivorefr/html2pdf.js')).default;
+      const html2pdfModule = await import('@digivorefr/html2pdf.js');
+      const html2pdf = html2pdfModule.default ?? html2pdfModule;
 
       // Récupérer les éléments uniquement par ID
       const calendarPreview = document.getElementById('calendar-preview');
