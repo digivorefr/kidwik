@@ -259,7 +259,7 @@ export const CalendarStorage = {
         try {
           const cs = new CompressionStream('gzip');
           const writer = cs.writable.getWriter();
-          writer.write(uint8Array);
+          writer.write(new Uint8Array(uint8Array.buffer as ArrayBuffer));
           writer.close();
 
           const reader = cs.readable.getReader();
@@ -331,7 +331,7 @@ export const CalendarStorage = {
         try {
           const ds = new DecompressionStream('gzip');
           const writer = ds.writable.getWriter();
-          writer.write(uint8Array);
+          writer.write(new Uint8Array(uint8Array.buffer as ArrayBuffer));
           writer.close();
 
           const reader = ds.readable.getReader();

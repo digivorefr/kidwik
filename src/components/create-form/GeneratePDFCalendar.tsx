@@ -10,8 +10,9 @@ export default function GeneratePDFCalendar() {
     setErrorMessage('')
 
     try {
-      // Dynamically import html2pdf only when needed (client-side only)
-      const html2pdf = (await import('@digivorefr/html2pdf.js')).default;
+      // Dynamically import the pre-built bundle to avoid Turbopack re-bundling CJS internals
+      const html2pdfModule = await import('@digivorefr/html2pdf.js/dist/html2pdf.bundle.min.js');
+      const html2pdf = html2pdfModule.default ?? html2pdfModule;
 
       // Récupérer les éléments uniquement par ID
       const calendarPreview = document.getElementById('calendar-preview');
